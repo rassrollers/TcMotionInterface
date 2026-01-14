@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="DriveXmlParameter" Id="{f1201aca-da9a-0279-38c8-062e13ddab76}">
+    <Declaration><![CDATA[TYPE DriveXmlParameter :
+STRUCT
+	Comment: STRING(255);
+	Index: WORD;
+	SubIndex: BYTE;
+	Data: ARRAY[0..255] OF BYTE;
+	Length: UDINT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

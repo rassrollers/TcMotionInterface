@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <Itf Name="IMotionMovement" Id="{8c089faf-cd63-0ad6-1bd2-65353cc8b8b9}">
+    <Declaration><![CDATA[INTERFACE IMotionMovement
+]]></Declaration>
+    <Property Name="GetAxisDirection" Id="{73ee3483-1b36-0a66-10af-94d8333b13df}">
+      <Declaration><![CDATA[PROPERTY GetAxisDirection : AxisDirection]]></Declaration>
+      <Get Name="Get" Id="{eece53c4-7c87-006b-228e-6f1d8b438198}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetAxisState" Id="{d4b8f797-e843-027f-0acf-b6552f89f36d}">
+      <Declaration><![CDATA[PROPERTY GetAxisState : AxisState]]></Declaration>
+      <Get Name="Get" Id="{106b03df-f7d5-0658-11f6-ebe91c7d6329}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetMotionStatus" Id="{cb9fb738-c230-081f-2af5-73f6d99051bc}">
+      <Declaration><![CDATA[PROPERTY GetMotionStatus : MotionStatus]]></Declaration>
+      <Get Name="Get" Id="{c3bceabf-1cbc-0968-3d98-d0b813a0ce20}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="HaltMovement" Id="{afc5c729-cfc6-08a1-147f-ca4da750f068}">
+      <Declaration><![CDATA[METHOD HaltMovement : BOOL;
+VAR_INPUT
+	Deceleration	: LREAL;
+	Jerk			: LREAL;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MoveAbsolute" Id="{2d385c2b-4b93-025c-3897-2b587cbfd4af}">
+      <Declaration><![CDATA[METHOD MoveAbsolute : BOOL;
+VAR_INPUT
+	Position		: LREAL;
+	Velocity		: LREAL;
+	Acceleration	: LREAL;
+	Deceleration	: LREAL;
+	Jerk			: LREAL;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MoveModulo" Id="{ef09982b-3427-00ba-3d05-089d54733bfd}">
+      <Declaration><![CDATA[METHOD MoveModulo : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MoveRelative" Id="{5254dbac-0a94-0edb-36b5-6ca4d8884f2c}">
+      <Declaration><![CDATA[METHOD MoveRelative : BOOL;
+VAR_INPUT
+	Distance		: LREAL;
+	Velocity		: LREAL;
+	Acceleration	: LREAL;
+	Deceleration	: LREAL;
+	Jerk			: LREAL;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="MoveVelocity" Id="{c1f70b48-9996-041a-1e2e-1c79c77f2716}">
+      <Declaration><![CDATA[METHOD MoveVelocity : BOOL;
+VAR_INPUT
+	Velocity		: LREAL;
+	Acceleration	: LREAL;
+	Deceleration	: LREAL;
+	Jerk			: LREAL;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

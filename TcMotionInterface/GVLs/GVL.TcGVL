@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <GVL Name="GVL" Id="{009cd2a4-2067-01dd-3dcc-0b8356d0ba4e}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	{attribute 'TcNcAxis' := '[0]:=Axis1; [1]:=Axis2; [2]:= Axis3'}
+	axRef: ARRAY[0..2] OF AXIS_REF;
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

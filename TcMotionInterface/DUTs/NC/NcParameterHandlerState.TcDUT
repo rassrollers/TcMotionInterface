@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="NcParameterHandlerState" Id="{1486dda8-7ec2-01d2-258a-3c006bc14b15}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE NcParameterHandlerState :
+(
+	Idle,
+	ReadGroup,
+	ReadAxis,
+	ReadEncoder,
+	ReadController,
+	ReadDrive,
+	WriteGroup,
+	WriteAxis,
+	WriteEncoder,
+	WriteController,
+	WriteDrive,
+	Error
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

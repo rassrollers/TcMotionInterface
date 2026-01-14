@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="GroupParameterIndex" Id="{850d65bc-560c-0cbc-1b44-03a23063a02c}">
+    <Declaration><![CDATA[// Parameters for NC axis' controller.
+// IndexGroup + GroupID.
+// Remember to update array size accordingly.
+// https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_ads_intro/713083531.html&id=9022479443874337457
+TYPE GroupParameterIndex :
+STRUCT
+	IndexGroup: UDINT := 16#3000;
+	Parameters: ARRAY[0..4] OF ParameterSet := [
+		(Name:= 'NC Group ID',								IndexOffset:= 16#00000001, ReadOnly:= TRUE,		Length:= 4),  // 0
+		(Name:= 'NC Group Type',							IndexOffset:= 16#00000003, ReadOnly:= TRUE,		Length:= 4),
+		(Name:= 'Setpoint Generator Type',					IndexOffset:= 16#0000000A, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Velocity Window',							IndexOffset:= 16#00000604, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Filter Time for Velocity Window',			IndexOffset:= 16#00000605, ReadOnly:= FALSE,	Length:= 8)   // 4
+	];
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

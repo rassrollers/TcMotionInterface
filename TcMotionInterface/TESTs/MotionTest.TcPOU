@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MotionTest" Id="{11cc36f8-e411-0cfe-1d47-5844eb0d1016}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK MotionTest
+VAR
+	motion1: TcMotionMovement;
+	motion2: TcMotionCamming;
+	motion3: TcMotionMovement;
+	BaseMotion: ARRAY[0..2] OF IMotionBase := [motion1, motion2, motion3];
+	MovementMotion1: IMotionMovement := motion1;
+	CammingMotion2: IMotionCamming := motion2;
+	
+	InitializeDone: BOOL;
+	Enable: BOOL;
+	Reset: BOOL;
+	MoveVel: BOOL;
+	MoveAbs: BOOL;
+	MoveRel: BOOL;
+	HaltMov: BOOL;
+	StopMov: BOOL;
+	CamInMov: BOOL;
+	
+	Error: ARRAY[0..2] OF STRING;
+	iFor: UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT InitializeDone THEN
+	FOR iFor := 0 TO 2 DO
+		BaseMotion[iFor].Init(Axis:= GVL.axRef[iFor]);
+	END_FOR
+	InitializeDone := TRUE;
+	RETURN;
+END_IF
+
+FOR iFor := 0 TO 2 DO
+	IF Reset THEN
+		BaseMotion[iFor].ResetError();
+		Error[iFor] := '';
+		Reset := FALSE;
+	ELSIF MoveVel THEN
+		MovementMotion1.MoveVelocity(Velocity:= 100, Acceleration:= 1000, Deceleration:= 1000, Jerk:= 10000);
+		MoveVel := FALSE;
+	ELSIF HaltMov THEN
+		MovementMotion1.HaltMovement(Deceleration:= 1000, Jerk:= 10000);
+		HaltMov := FALSE;
+	ELSIF MoveAbs THEN
+		MovementMotion1.MoveAbsolute(Position:= 350, Velocity:= 100, Acceleration:= 1000, Deceleration:= 1000, Jerk:= 10000);
+		MoveAbs := FALSE;
+	ELSIF MoveRel THEN
+		MovementMotion1.MoveRelative(Distance:= 900, Velocity:= 100, Acceleration:= 1000, Deceleration:= 1000, Jerk:= 10000);
+		MoveRel := FALSE;
+	ELSIF StopMov THEN
+		BaseMotion[iFor].StopMovement(Deceleration:= 1000, Jerk:= 10000);
+		StopMov := FALSE;
+	ELSIF CamInMov THEN
+		CammingMotion2.CamIn();
+		CamInMov := FALSE;
+	END_IF
+	
+	BaseMotion[iFor].Run(EnableAxis:= Enable);
+
+	Error[iFor] := BaseMotion[iFor].GetError;
+END_FOR
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

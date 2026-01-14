@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="PRG_TEST" Id="{074b34d7-23f1-46e6-ab5c-dcdee3c6384a}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_TEST
+VAR
+	Motion	: MotionTest;
+	NC		: NcParameterTest;
+	XML		: XmlHandler_Test;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Motion();
+NC();
+XML();
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

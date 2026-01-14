@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ControllerParameterIndex" Id="{dc53aed4-3927-01a9-27dd-22ce247783cd}">
+    <Declaration><![CDATA[// Parameters for NC axis' controller.
+// IndexGroup + AxisID.
+// Remember to update array size accordingly.
+// https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_ads_intro/713112843.html&id=7930327954037391164
+TYPE ControllerParameterIndex :
+STRUCT
+	IndexGroup: UDINT := 16#6000;
+	Parameters: ARRAY[0..11] OF ParameterSet := [
+		(Name:= 'NC controller type',										IndexOffset:= 16#00000003, ReadOnly:= TRUE,		Length:= 4),  // 0
+		(Name:= 'Controller Mode',											IndexOffset:= 16#0000000A, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Feedforward Velocity: Pre-Control Weighting[0.0 - 1.0]',	IndexOffset:= 16#0000000B, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Position Lag Monitoring',									IndexOffset:= 16#00000010, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Maximum Position Lag Value',								IndexOffset:= 16#00000012, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Maximum Position Lag Filter Time',							IndexOffset:= 16#00000013, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Controller Outputlimit [0.0 ... 1.0]',						IndexOffset:= 16#00000100, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Position control: Proportional Factor Kv',					IndexOffset:= 16#00000102, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Slave coupling control: Proportional Factor Kcp',			IndexOffset:= 16#0000010F, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Auto Offset',												IndexOffset:= 16#00000110, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Offset Limit (of Calibration Velocity)',					IndexOffset:= 16#00000114, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Offset Timer',												IndexOffset:= 16#00000115, ReadOnly:= FALSE,	Length:= 8)   // 11
+	];
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

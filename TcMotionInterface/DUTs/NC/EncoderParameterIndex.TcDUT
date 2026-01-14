@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="EncoderParameterIndex" Id="{ac71ebce-674e-0ea3-3f49-edf43d09dd4a}">
+    <Declaration><![CDATA[// Parameters for NC axis' encoder.
+// IndexGroup + AxisID.
+// Remember to update array size accordingly.
+// https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_ads_intro/713102219.html&id=3547263341947658626
+TYPE EncoderParameterIndex :
+STRUCT
+	IndexGroup: UDINT := 16#5000;
+	Parameters: ARRAY[0..25] OF ParameterSet := [
+		(Name:= 'NC encoder type',									IndexOffset:= 16#00000003, ReadOnly:= TRUE,		Length:= 4),  // 0
+		(Name:= 'Position Bias',									IndexOffset:= 16#00000007, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Invert Encoder Counting Direction',				IndexOffset:= 16#00000008, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Modulo Factor (e.g. 360.0°)',						IndexOffset:= 16#00000009, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Encoder Mode',										IndexOffset:= 16#0000000A, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Soft Position Limit Minimum Monitoring',			IndexOffset:= 16#0000000B, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Soft Position Limit Maximum Monitoring',			IndexOffset:= 16#0000000C, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Minimum Position',									IndexOffset:= 16#0000000D, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Maximum Position',									IndexOffset:= 16#0000000E, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Filter Time for Actual Position (P-T1)',			IndexOffset:= 16#00000010, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Filter Time for Actual Velocity (P-T1)',			IndexOffset:= 16#00000011, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Filter Time for Actual Acceleration (P-T1)',		IndexOffset:= 16#00000012, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Encoder Mask (maximum encoder value)',				IndexOffset:= 16#00000015, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Position Correction',								IndexOffset:= 16#00000016, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Filter Time Position Correction (P-T1)',			IndexOffset:= 16#00000017, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Reference System',									IndexOffset:= 16#00000019, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Tolerance Window for Modulo Start',				IndexOffset:= 16#0000001B, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Time Compensation Mode Encoder',					IndexOffset:= 16#00000020, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Scaling Factor Numerator',							IndexOffset:= 16#00000023, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Scaling Factor Denominator (default: 1.0)',		IndexOffset:= 16#00000024, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Invert Direction for Homing Sensor Search',		IndexOffset:= 16#00000101, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Invert Direction for Sync Impuls Search',			IndexOffset:= 16#00000102, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Home Position (Calibration Value)',				IndexOffset:= 16#00000103, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Reference Mode (Sync condition)',					IndexOffset:= 16#00000107, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Encoder Sub Mask (absolute range maximum value)',	IndexOffset:= 16#00000108, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Homing Sensor Source',								IndexOffset:= 16#00000109, ReadOnly:= FALSE,	Length:= 4)   // 25
+	];
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

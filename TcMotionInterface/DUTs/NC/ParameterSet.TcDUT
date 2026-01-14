@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="ParameterSet" Id="{4797c644-9e41-06d0-3fcf-bd7c43269af0}">
+    <Declaration><![CDATA[TYPE ParameterSet :
+STRUCT
+	Name		: STRING[TcMotionInterface_Param.ParameterSetNameSize] := '';  // Parameter name in UI
+	IndexOffset	: UDINT := 0;  // Offset of the group parameter
+	ReadOnly	: BOOL := FALSE;  // Parameter is read only
+	Length		: UDINT := 0;  // Number of bytes (2 = boolean, 4 = integer, 8 = floating point)
+	Value		: LINT := 0;  // Value (Floating point is stored in Double-precision format)
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

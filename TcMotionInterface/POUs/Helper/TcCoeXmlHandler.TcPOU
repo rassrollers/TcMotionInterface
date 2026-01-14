@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="TcCoeXmlHandler" Id="{b1bf6ebd-49e7-029f-02d9-e3af3b45347f}" SpecialFunc="None">
+    <Declaration><![CDATA[// This FB is designed to load and return parameter sets from a drive XML file.
+// It can only read parameters from CoE XML files format.
+FUNCTION_BLOCK TcCoeXmlHandler
+VAR
+	xmlDom: FB_XmlDomParser;
+	hRes: HRESULT;
+	_error: BOOL;
+	_errorString: STRING[TcMotionInterface_Param.ErrorStringSize];
+	
+	rootNode: SXmlNode;
+	rootXmlLength: UDINT;
+	initCmdsNode: SXmlNode;
+	initCmdsItr: SXmlIterator;
+	initCmdsXmlLength: UDINT;
+	initCmdNode: SXmlNode;
+	initCmdXmlLength: UDINT;
+END_VAR
+VAR CONSTANT
+	PARAMETERXMLPATH: STRING := 'CoE/InitCmds';
+	FILENOTFOUND: HRESULT := UDINT_TO_DINT(16#9811070C);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="CloseXmlFile" Id="{d5fabe62-7057-0f99-0985-60ab5ed0c1dd}">
+      <Declaration><![CDATA[METHOD CloseXmlFile : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// Parse empty string first to free all memory, then create new document
+xmlDom.ParseDocument('');
+xmlDom.NewDocument();
+CloseXmlFile := TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Error" Id="{1f61d283-0ced-06fa-1f72-2a80761a8211}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{1c6dd705-86b5-0d7c-3496-def2f0cd43ce}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := _error;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="ExtractParameters" Id="{7d7b91eb-a96d-0935-1f3b-68962ff7cdab}">
+      <Declaration><![CDATA[METHOD PRIVATE ExtractParameters : DriveXmlParameter
+VAR_INPUT
+	XmlNode: SXmlNode;
+END_VAR
+VAR
+	commentChild: SXmlNode;
+	indexChild: SXmlNode;
+	subIndexChild: SXmlNode;
+	dataChild: SXmlNode;
+	tempHexData: STRING(255);
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[commentChild := xmlDom.ChildByName(XmlNode, 'Comment');
+ExtractParameters.Comment := xmlDom.NodeText(n:= commentChild);
+
+indexChild := xmlDom.ChildByName(XmlNode, 'Index');
+ExtractParameters.Index := UDINT_TO_WORD(xmlDom.NodeAsUint(n:= indexChild));
+
+subIndexChild := xmlDom.ChildByName(XmlNode, 'SubIndex');
+ExtractParameters.SubIndex := UDINT_TO_BYTE(xmlDom.NodeAsUint(n:= subIndexChild));
+
+dataChild := xmlDom.ChildByName(XmlNode, 'Data');
+tempHexData := xmlDom.NodeText(n:= dataChild);
+ExtractParameters.Length := HEXSTR_TO_DATA(sHex:= tempHexData, pData:= ADR(ExtractParameters.Data), cbData:= SIZEOF(ExtractParameters.Data));
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FindParameters" Id="{6072f64e-eb1a-01c6-1ceb-b51c49b7ea0e}">
+      <Declaration><![CDATA[METHOD PRIVATE FindParameters : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[rootNode := xmlDom.GetRootNode();
+rootXmlLength := xmlDom.GetNodeXmlLength(n:= rootNode);
+initCmdsNode := xmlDom.FirstNodeByPath(n:= rootNode, path:= PARAMETERXMLPATH);
+initCmdsXmlLength := xmlDom.GetNodeXmlLength(n:= initCmdsNode);
+xmlDom.ClearIterator(it:= initCmdsItr);
+xmlDom.Children(n:= initCmdsNode, it:= initCmdsItr); // return the first child node
+
+IF rootNode = 0 OR rootXmlLength = 0 THEN 
+	_error := TRUE;
+	_errorString := 'Error: Unable to find root node in XML file';
+ELSIF initCmdsNode = 0 OR initCmdsXmlLength = 0 THEN
+	_error := TRUE;
+	_errorString := 'Error: Unable to find InitCmds node in XML file';
+ELSIF initCmdsItr[0] = 0 OR initCmdsItr[1] = 0 THEN
+	_error := TRUE;
+	_errorString := 'Error: InitCmds node did not contain children';
+ELSE
+	FindParameters := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="GetError" Id="{48f60c8e-0823-0fbb-235b-2ca03b9e5cc3}">
+      <Declaration><![CDATA[PROPERTY GetError : STRING[TcMotionInterface_Param.ErrorStringSize]]]></Declaration>
+      <Get Name="Get" Id="{9cf1b2d8-8a78-0562-14f4-118530357fd0}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetError := _errorString;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="GetParameterSet" Id="{a42d12f0-f09f-0b4c-3fc9-33858aaba818}">
+      <Declaration><![CDATA[METHOD GetParameterSet : DriveXmlParameter
+VAR_OUTPUT
+	EndOfFile: BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF xmlDom.IsEnd(initCmdsItr) THEN
+	EndOfFile := TRUE;
+	RETURN;
+END_IF
+
+initCmdNode := xmlDom.Node(it:= initCmdsItr);
+initCmdXmlLength := xmlDom.GetNodeXmlLength(n:= initCmdNode);
+IF initCmdNode = 0 OR initCmdXmlLength = 0 THEN
+	_error := TRUE;
+	_errorString := 'Error: InitCmd node was empty';
+ELSE
+	GetParameterSet := ExtractParameters(XmlNode:= initCmdNode);
+	initCmdsItr := xmlDom.Next(it:= initCmdsItr);
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="LoadXmlFile" Id="{61570c11-d877-05ea-2dc3-7ba423d90764}">
+      <Declaration><![CDATA[METHOD LoadXmlFile : BOOL
+VAR_INPUT
+	FilePath: STRING(255);  // e.g. /home/Administrator/driveA.xml
+END_VAR
+VAR_INST
+	loadFile: BOOL;
+	fileLoaded: BOOL;
+	setLoadFile: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT setLoadFile THEN
+	xmlDom.NewDocument();
+	loadFile := TRUE;
+	setLoadFile := TRUE;
+END_IF
+
+fileLoaded := xmlDom.LoadDocumentFromFile(sFile:= filePath, bExec:= loadFile, hrErrorCode=> hRes);
+
+IF NOT loadFile then
+	IF fileLoaded THEN
+		LoadXmlFile := FindParameters();
+	ELSIF hRes = FILENOTFOUND THEN
+		_error := TRUE;
+		_errorString := 'Error: File not found';
+	ELSIF NOT fileLoaded THEN
+		_error := TRUE;
+		_errorString := 'Error: Unsuccesful loading';
+	ELSE
+		_error := TRUE;
+		_errorString := CONCAT('Error: Unknown error ', DWORD_TO_HEXSTR(in:= DINT_TO_DWORD(hRes), iPrecision:= 4, bLoCase:= FALSE));
+	END_IF
+	setLoadFile := FALSE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetError" Id="{e89cf38e-79aa-069a-1556-61f44659c680}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[xmlDom.ParseDocument('');
+xmlDom.NewDocument();
+_error := FALSE;
+_errorString := '';
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

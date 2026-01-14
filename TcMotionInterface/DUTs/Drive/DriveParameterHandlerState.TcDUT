@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="DriveParameterHandlerState" Id="{36f44f40-b382-050d-1e27-5008b02b6398}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE DriveParameterHandlerState :
+(
+	Idle,
+	LoadParameters,
+	GetParameters,
+	DownloadParameters,
+	Done,
+	Error
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

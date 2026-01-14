@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="NcParameterTest" Id="{1e10cb95-884f-0ffd-248b-75a46c59ffee}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK NcParameterTest
+VAR
+	NcPHandler_VM: NcParameterHandler_ViewModel;
+	nc: TcNcParameterHandler;
+	parm: NcParameter;
+	
+	C2: AXIS_REF;
+	status: Tc2_MC2.MC_ReadStatus;
+	drive: Tc2_MC2.MC_ReadDriveAddress;
+	axisStatus: BOOL;
+	
+	read: BOOL;
+	write: BOOL;
+	error: BOOL;
+	errorString: STRING(TcMotionInterface_Param.ErrorStringSize);
+	reset: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF read THEN
+	IF nc.ReadNcParameters(NcParameters:= parm, NcAxisID:= C2.NcToPlc.AxisId) THEN
+		read := FALSE;
+	END_IF
+ELSIF write THEN
+	IF nc.WriteNcParameters(NcParameters:= parm, NcAxisID:= C2.NcToPlc.AxisId) THEN
+		write := FALSE;
+	END_IF
+END_IF
+
+IF axisStatus THEN
+	status(Axis:= C2, Enable:= TRUE);
+	drive(Axis:= C2, Execute:= TRUE);
+ELSE
+	status(Axis:= C2, Enable:= FALSE);
+	drive(Axis:= C2, Execute:= FALSE);
+END_IF
+
+IF nc.Error THEN
+	errorString := nc.GetError;
+	read := write := FALSE;
+END_IF
+
+IF reset THEN 
+	nc.ResetError();
+	errorString := '';
+	reset := FALSE;
+END_IF
+
+NcPHandler_VM();
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

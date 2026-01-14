@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="MotionDirection" Id="{43a3b095-20c6-08b4-35ba-2d61195dfa8d}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE MotionDirection :
+(
+	mcPositiveDirection,
+	mcShortestWay,
+	mcNegativeDirection,
+	mcCurrentDirection
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

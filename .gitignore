@@ -6,8 +6,8 @@
 *.plcproj.orig
 *.tpy
 *.tclrs
-*.library
-*.compiled-library
+#*.library # Keep libraries avaliable in the project
+#*.compiled-library
 *.compileinfo
 *.asm
 *.core

@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="XmlHandler_Test" Id="{cb71b6ff-90c3-0c45-2ac4-a243044c52f7}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK XmlHandler_Test
+VAR
+	XmlHandler: TcDriveParameterHandler;
+	RouterMem: FB_GetRouterStatusInfo;
+	Status: ST_TcRouterStatusInfo;
+	file: STRING := '/home/Administrator/parm.xml';
+	file2: STRING := '/home/Administrator/i550V5_4_Async50HzV1.xml';
+	ax: AXIS_REF;
+	write: BOOL;
+	write2: BOOL;
+	powerOn: BOOL;
+	readState: BOOL;
+	readAddr: BOOL;
+	power: MC_Power;
+	state: MC_ReadStatus;
+	address: MC_ReadDriveAddress;
+	reset: BOOL;
+	starter: BOOL;
+	startTime: ULINT;
+	stopTime: ULINT;
+	diffTime: ULINT;
+	parametersWritten: UDINT;
+	parametersWritten2: UDINT;
+	canAms: STRING := '192.168.17.10.3.1';
+	canNode: UINT := 14;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF powerOn THEN
+	power(Axis:= ax, 
+		Enable:= TRUE, 
+		Enable_Positive:= TRUE, 
+		Enable_Negative:= TRUE
+	);
+END_IF
+
+IF readState THEN
+	state(Axis:= ax, Enable:= TRUE);
+END_IF
+
+IF readAddr THEN
+	address(Axis:= ax, Execute:= TRUE);
+END_IF
+
+IF write and not write2 THEN
+	IF NOT starter THEN
+		startTime := F_GetSystemTime();
+		starter := TRUE;
+	END_IF
+	
+	IF XmlHandler.WriteEtcDriveParameter(FilePath:= file, NetId:= ax.DriveAddress.NetID, EtcAddress:= ax.DriveAddress.SlaveAddress, NumberOfParameterWritten=> parametersWritten) THEN
+		stopTime := F_GetSystemTime();
+		diffTime := (stopTime - startTime) / 10000; // ms
+		starter := FALSE;
+		write := FALSE;
+	END_IF
+	IF XmlHandler.Error THEN
+		starter := FALSE;
+		write := FALSE;
+	END_IF
+END_IF
+
+IF write2 AND NOT write THEN
+	IF NOT starter THEN
+		startTime := F_GetSystemTime();
+		starter := TRUE;
+	END_IF
+	
+	IF XmlHandler.WriteCanOpenParameters(FilePath:= file2, NetId:= canAms, CanId:= canNode, NumberOfParameterWritten=> parametersWritten2) THEN
+		stopTime := F_GetSystemTime();
+		diffTime := (stopTime - startTime) / 10000; // ms
+		starter := FALSE;
+		write2 := FALSE;
+	END_IF
+	IF XmlHandler.Error THEN
+		starter := FALSE;
+		write2 := FALSE;
+	END_IF
+END_IF
+
+IF reset THEN
+	XmlHandler.ResetError();
+	reset := FALSE;
+END_IF
+
+RouterMem(bExecute:= TRUE);
+IF NOT RouterMem.bBusy THEN
+	Status := RouterMem.info;
+	RouterMem(bExecute:= FALSE);
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
