@@ -171,7 +171,7 @@ ELSIF _state = Writing THEN
 			);
 			IF _jsonLen = 0 THEN
 				_Error := TRUE;
-				_ErrorString := 'JSON ERROR: Error copying struct to string. Check string size';
+				_ErrorString := 'JSON ERROR: Error copying struct to string. Check JSON string size';
 				_state := JsonError;
 			ELSE
 				_state := FileWriting;

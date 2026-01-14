@@ -17,6 +17,7 @@
 		<Plc>
 			<Project File="TcMotionInterface.xti"/>
 		</Plc>
+		<Io/>
 		<Variants SpecificLocalBootFolder="true">
 			<Variant>
 				<Name>Machine</Name>
@@ -26,4 +27,7 @@
 			</Variant>
 		</Variants>
 	</Project>
+	<Mappings>
+		<MappingInfo Identifier="{05000010-2001-0850-1000-040300205008}" Id="#x02030010" Watchdog="04000000040000000400000004000000"/>
+	</Mappings>
 </TcSmProject>

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1">
   <Visu Name="View_Test" Id="{868af1aa-845b-06e7-3976-0fc729537f2c}">
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="VisualObject">
           <n n="LastVisuLanguageModelEntry" />
-          <v n="UniqueIdGenerator">"5"</v>
+          <v n="UniqueIdGenerator">"8"</v>
           <o n="VisualElemList" t="VisualElemList">
             <l n="VisualElementList" t="VisualElemCollection" cet="GenericVisualElem">
               <o>
@@ -62,6 +62,7 @@
                               <n n="EnumValueVisibilityAttributeValues" />
                               <n n="EnumValueLibraryId" />
                               <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                              <n n="EnumValueDisplayName" />
                               <l n="TypeNodeChildren" t="ArrayList" />
                               <o n="TypeNodeType" t="TypeNodeType">
                                 <v n="TypeClass" t="TypeClass">Int</v>
@@ -80,6 +81,7 @@
                               <v n="TypeNodeId" t="Int16">20</v>
                               <v n="TypeNodeIdLong">87295452L</v>
                               <v n="LibraryId">"visuelembase, 3.5.13.40 (system)"</v>
+                              <n n="ElementId" />
                               <n n="DisplayTextId" />
                               <n n="DescriptionTextID" />
                               <v n="DescriptionUseParent">false</v>
@@ -111,6 +113,7 @@
                               <v n="TypeNodeId" t="Int16">1</v>
                               <v n="TypeNodeIdLong">3861935604L</v>
                               <n n="LibraryId" />
+                              <n n="ElementId" />
                               <n n="DisplayTextId" />
                               <n n="DescriptionTextID" />
                               <v n="DescriptionUseParent">false</v>
@@ -134,6 +137,7 @@
                                         <n n="EnumValueVisibilityAttributeValues" />
                                         <n n="EnumValueLibraryId" />
                                         <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                        <n n="EnumValueDisplayName" />
                                         <l n="TypeNodeChildren" t="ArrayList" />
                                         <o n="TypeNodeType" t="TypeNodeType">
                                           <v n="TypeClass" t="TypeClass">String</v>
@@ -171,6 +175,7 @@
                                         <v n="TypeNodeId" t="Int16">2</v>
                                         <v n="TypeNodeIdLong">2398909109L</v>
                                         <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                        <n n="ElementId" />
                                         <v n="DisplayTextId">"TL_ElementProperties.Heading"</v>
                                         <n n="DescriptionTextID" />
                                         <v n="DescriptionUseParent">false</v>
@@ -185,6 +190,7 @@
                                         <n n="EnumValueVisibilityAttributeValues" />
                                         <n n="EnumValueLibraryId" />
                                         <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                        <n n="EnumValueDisplayName" />
                                         <l n="TypeNodeChildren" t="ArrayList" />
                                         <o n="TypeNodeType" t="TypeNodeType">
                                           <v n="TypeClass" t="TypeClass">String</v>
@@ -209,6 +215,7 @@
                                         <v n="TypeNodeId" t="Int16">3</v>
                                         <v n="TypeNodeIdLong">1480420536L</v>
                                         <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                        <n n="ElementId" />
                                         <n n="DisplayTextId" />
                                         <n n="DescriptionTextID" />
                                         <v n="DescriptionUseParent">false</v>
@@ -223,6 +230,7 @@
                                         <n n="EnumValueVisibilityAttributeValues" />
                                         <n n="EnumValueLibraryId" />
                                         <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                        <n n="EnumValueDisplayName" />
                                         <l n="TypeNodeChildren" t="ArrayList" />
                                         <o n="TypeNodeType" t="TypeNodeType">
                                           <v n="TypeClass" t="TypeClass">String</v>
@@ -253,6 +261,7 @@
                                         <v n="TypeNodeId" t="Int16">4</v>
                                         <v n="TypeNodeIdLong">2302991252L</v>
                                         <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                        <n n="ElementId" />
                                         <v n="DisplayTextId">"TL_ElementProperties.ImageID"</v>
                                         <n n="DescriptionTextID" />
                                         <v n="DescriptionUseParent">false</v>
@@ -287,6 +296,7 @@
                                     <v n="TypeNodeId" t="Int16">1</v>
                                     <v n="TypeNodeIdLong">187975896L</v>
                                     <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                    <n n="ElementId" />
                                     <n n="DisplayTextId" />
                                     <n n="DescriptionTextID" />
                                     <v n="DescriptionUseParent">false</v>
@@ -301,6 +311,7 @@
                                     <n n="EnumValueVisibilityAttributeValues" />
                                     <n n="EnumValueLibraryId" />
                                     <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                    <n n="EnumValueDisplayName" />
                                     <l n="TypeNodeChildren" t="ArrayList" />
                                     <o n="TypeNodeType" t="TypeNodeType">
                                       <v n="TypeClass" t="TypeClass">Reference</v>
@@ -316,6 +327,7 @@
                                     <v n="TypeNodeId" t="Int16">255</v>
                                     <v n="TypeNodeIdLong">3671745177L</v>
                                     <n n="LibraryId" />
+                                    <n n="ElementId" />
                                     <n n="DisplayTextId" />
                                     <n n="DescriptionTextID" />
                                     <v n="DescriptionUseParent">false</v>
@@ -342,6 +354,7 @@
                                 <v n="TypeNodeId" t="Int16">1</v>
                                 <v n="TypeNodeIdLong">2473092364L</v>
                                 <n n="LibraryId" />
+                                <n n="ElementId" />
                                 <n n="DisplayTextId" />
                                 <n n="DescriptionTextID" />
                                 <v n="DescriptionUseParent">false</v>
@@ -373,6 +386,7 @@
                             <v n="TypeNodeId" t="Int16">19</v>
                             <v n="TypeNodeIdLong">1547928903L</v>
                             <v n="LibraryId">"visuelembase, 3.5.13.40 (system)"</v>
+                            <n n="ElementId" />
                             <n n="DisplayTextId" />
                             <n n="DescriptionTextID" />
                             <v n="DescriptionUseParent">false</v>
@@ -387,6 +401,7 @@
                             <n n="EnumValueVisibilityAttributeValues" />
                             <n n="EnumValueLibraryId" />
                             <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                            <n n="EnumValueDisplayName" />
                             <l n="TypeNodeChildren" t="ArrayList" />
                             <o n="TypeNodeType" t="TypeNodeType">
                               <v n="TypeClass" t="TypeClass">Int</v>
@@ -405,6 +420,7 @@
                             <v n="TypeNodeId" t="Int16">20</v>
                             <v n="TypeNodeIdLong">87295452L</v>
                             <v n="LibraryId">"visuelembase, 3.5.13.40 (system)"</v>
+                            <n n="ElementId" />
                             <n n="DisplayTextId" />
                             <n n="DescriptionTextID" />
                             <v n="DescriptionUseParent">false</v>
@@ -445,6 +461,7 @@
                         <v n="TypeNodeId" t="Int16">18</v>
                         <v n="TypeNodeIdLong">363316305L</v>
                         <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                        <n n="ElementId" />
                         <v n="DisplayTextId">"TL_ElementProperties.References"</v>
                         <v n="DescriptionTextID">"TL_ElementProperties.Desc_ReferencedVisus"</v>
                         <v n="DescriptionUseParent">false</v>
@@ -466,6 +483,7 @@
                               <n n="EnumValueVisibilityAttributeValues" />
                               <n n="EnumValueLibraryId" />
                               <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                              <n n="EnumValueDisplayName" />
                               <l n="TypeNodeChildren" t="ArrayList" />
                               <o n="TypeNodeType" t="TypeNodeType">
                                 <v n="TypeClass" t="TypeClass">Int</v>
@@ -486,6 +504,7 @@
                               <v n="TypeNodeId" t="Int16">3</v>
                               <v n="TypeNodeIdLong">2349357054L</v>
                               <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                              <n n="ElementId" />
                               <n n="DisplayTextId" />
                               <n n="DescriptionTextID" />
                               <v n="DescriptionUseParent">false</v>
@@ -504,6 +523,7 @@
                                   <n n="EnumValueVisibilityAttributeValues" />
                                   <n n="EnumValueLibraryId" />
                                   <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                  <n n="EnumValueDisplayName" />
                                   <l n="TypeNodeChildren" t="ArrayList" />
                                   <o n="TypeNodeType" t="TypeNodeType">
                                     <v n="TypeClass" t="TypeClass">String</v>
@@ -541,6 +561,7 @@
                                   <v n="TypeNodeId" t="Int16">2</v>
                                   <v n="TypeNodeIdLong">2696153990L</v>
                                   <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                  <n n="ElementId" />
                                   <v n="DisplayTextId">"TL_ElementProperties.Heading"</v>
                                   <n n="DescriptionTextID" />
                                   <v n="DescriptionUseParent">false</v>
@@ -555,6 +576,7 @@
                                   <n n="EnumValueVisibilityAttributeValues" />
                                   <n n="EnumValueLibraryId" />
                                   <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                  <n n="EnumValueDisplayName" />
                                   <l n="TypeNodeChildren" t="ArrayList" />
                                   <o n="TypeNodeType" t="TypeNodeType">
                                     <v n="TypeClass" t="TypeClass">String</v>
@@ -579,6 +601,7 @@
                                   <v n="TypeNodeId" t="Int16">3</v>
                                   <v n="TypeNodeIdLong">3883317560L</v>
                                   <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                  <n n="ElementId" />
                                   <n n="DisplayTextId" />
                                   <n n="DescriptionTextID" />
                                   <v n="DescriptionUseParent">false</v>
@@ -593,6 +616,7 @@
                                   <n n="EnumValueVisibilityAttributeValues" />
                                   <n n="EnumValueLibraryId" />
                                   <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                  <n n="EnumValueDisplayName" />
                                   <l n="TypeNodeChildren" t="ArrayList" />
                                   <o n="TypeNodeType" t="TypeNodeType">
                                     <v n="TypeClass" t="TypeClass">String</v>
@@ -623,6 +647,7 @@
                                   <v n="TypeNodeId" t="Int16">4</v>
                                   <v n="TypeNodeIdLong">1682117473L</v>
                                   <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                  <n n="ElementId" />
                                   <v n="DisplayTextId">"TL_ElementProperties.ImageID"</v>
                                   <n n="DescriptionTextID" />
                                   <v n="DescriptionUseParent">false</v>
@@ -657,6 +682,7 @@
                               <v n="TypeNodeId" t="Int16">1</v>
                               <v n="TypeNodeIdLong">3072004940L</v>
                               <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                              <n n="ElementId" />
                               <n n="DisplayTextId" />
                               <n n="DescriptionTextID" />
                               <v n="DescriptionUseParent">false</v>
@@ -675,6 +701,7 @@
                                     <n n="EnumValueVisibilityAttributeValues" />
                                     <n n="EnumValueLibraryId" />
                                     <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                    <n n="EnumValueDisplayName" />
                                     <l n="TypeNodeChildren" t="ArrayList" />
                                     <o n="TypeNodeType" t="TypeNodeType">
                                       <v n="TypeClass" t="TypeClass">String</v>
@@ -712,6 +739,7 @@
                                     <v n="TypeNodeId" t="Int16">2</v>
                                     <v n="TypeNodeIdLong">2398909109L</v>
                                     <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                    <n n="ElementId" />
                                     <v n="DisplayTextId">"TL_ElementProperties.Heading"</v>
                                     <n n="DescriptionTextID" />
                                     <v n="DescriptionUseParent">false</v>
@@ -726,6 +754,7 @@
                                     <n n="EnumValueVisibilityAttributeValues" />
                                     <n n="EnumValueLibraryId" />
                                     <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                    <n n="EnumValueDisplayName" />
                                     <l n="TypeNodeChildren" t="ArrayList" />
                                     <o n="TypeNodeType" t="TypeNodeType">
                                       <v n="TypeClass" t="TypeClass">String</v>
@@ -750,6 +779,7 @@
                                     <v n="TypeNodeId" t="Int16">3</v>
                                     <v n="TypeNodeIdLong">1480420536L</v>
                                     <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                    <n n="ElementId" />
                                     <n n="DisplayTextId" />
                                     <n n="DescriptionTextID" />
                                     <v n="DescriptionUseParent">false</v>
@@ -764,6 +794,7 @@
                                     <n n="EnumValueVisibilityAttributeValues" />
                                     <n n="EnumValueLibraryId" />
                                     <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                    <n n="EnumValueDisplayName" />
                                     <l n="TypeNodeChildren" t="ArrayList" />
                                     <o n="TypeNodeType" t="TypeNodeType">
                                       <v n="TypeClass" t="TypeClass">String</v>
@@ -794,6 +825,7 @@
                                     <v n="TypeNodeId" t="Int16">4</v>
                                     <v n="TypeNodeIdLong">2302991252L</v>
                                     <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                    <n n="ElementId" />
                                     <v n="DisplayTextId">"TL_ElementProperties.ImageID"</v>
                                     <n n="DescriptionTextID" />
                                     <v n="DescriptionUseParent">false</v>
@@ -828,6 +860,7 @@
                                 <v n="TypeNodeId" t="Int16">1</v>
                                 <v n="TypeNodeIdLong">187975896L</v>
                                 <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                <n n="ElementId" />
                                 <n n="DisplayTextId" />
                                 <n n="DescriptionTextID" />
                                 <v n="DescriptionUseParent">false</v>
@@ -854,6 +887,7 @@
                             <v n="TypeNodeId" t="Int16">2</v>
                             <v n="TypeNodeIdLong">2837776246L</v>
                             <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                            <n n="ElementId" />
                             <v n="DisplayTextId">"TL_ElementProperties.Tabs"</v>
                             <n n="DescriptionTextID" />
                             <v n="DescriptionUseParent">false</v>
@@ -868,6 +902,7 @@
                             <n n="EnumValueVisibilityAttributeValues" />
                             <n n="EnumValueLibraryId" />
                             <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                            <n n="EnumValueDisplayName" />
                             <l n="TypeNodeChildren" t="ArrayList" />
                             <o n="TypeNodeType" t="TypeNodeType">
                               <v n="TypeClass" t="TypeClass">Int</v>
@@ -888,6 +923,7 @@
                             <v n="TypeNodeId" t="Int16">3</v>
                             <v n="TypeNodeIdLong">2349357054L</v>
                             <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                            <n n="ElementId" />
                             <n n="DisplayTextId" />
                             <n n="DescriptionTextID" />
                             <v n="DescriptionUseParent">false</v>
@@ -930,6 +966,7 @@
                         <v n="TypeNodeId" t="Int16">1</v>
                         <v n="TypeNodeIdLong">3002715997L</v>
                         <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                        <n n="ElementId" />
                         <v n="DisplayTextId">"TL_ElementProperties.Tabs"</v>
                         <n n="DescriptionTextID" />
                         <v n="DescriptionUseParent">false</v>
@@ -983,6 +1020,7 @@
                                 <n n="EnumValueVisibilityAttributeValues" />
                                 <n n="EnumValueLibraryId" />
                                 <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                <n n="EnumValueDisplayName" />
                                 <l n="TypeNodeChildren" t="ArrayList" />
                                 <o n="TypeNodeType" t="TypeNodeType">
                                   <v n="TypeClass" t="TypeClass">String</v>
@@ -1020,13 +1058,14 @@
                                 <v n="TypeNodeId" t="Int16">2</v>
                                 <v n="TypeNodeIdLong">2398909109L</v>
                                 <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                <n n="ElementId" />
                                 <v n="DisplayTextId">"TL_ElementProperties.Heading"</v>
                                 <n n="DescriptionTextID" />
                                 <v n="DescriptionUseParent">false</v>
                               </o>
                               <o>
                                 <v n="Flags">16L</v>
-                                <v n="BasicTypeNodeValue">"465"</v>
+                                <v n="BasicTypeNodeValue">"871"</v>
                                 <v n="BasicTypeNodeAcceptsExpression">false</v>
                                 <n n="BasicTypeNodeFastAccess" />
                                 <a n="BasicTypeNodeEnumValues" et="String" />
@@ -1034,6 +1073,7 @@
                                 <n n="EnumValueVisibilityAttributeValues" />
                                 <n n="EnumValueLibraryId" />
                                 <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                <n n="EnumValueDisplayName" />
                                 <l n="TypeNodeChildren" t="ArrayList" />
                                 <o n="TypeNodeType" t="TypeNodeType">
                                   <v n="TypeClass" t="TypeClass">String</v>
@@ -1058,6 +1098,7 @@
                                 <v n="TypeNodeId" t="Int16">3</v>
                                 <v n="TypeNodeIdLong">1480420536L</v>
                                 <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                <n n="ElementId" />
                                 <n n="DisplayTextId" />
                                 <n n="DescriptionTextID" />
                                 <v n="DescriptionUseParent">false</v>
@@ -1072,6 +1113,7 @@
                                 <n n="EnumValueVisibilityAttributeValues" />
                                 <n n="EnumValueLibraryId" />
                                 <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                                <n n="EnumValueDisplayName" />
                                 <l n="TypeNodeChildren" t="ArrayList" />
                                 <o n="TypeNodeType" t="TypeNodeType">
                                   <v n="TypeClass" t="TypeClass">String</v>
@@ -1102,6 +1144,7 @@
                                 <v n="TypeNodeId" t="Int16">4</v>
                                 <v n="TypeNodeIdLong">2302991252L</v>
                                 <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                                <n n="ElementId" />
                                 <v n="DisplayTextId">"TL_ElementProperties.ImageID"</v>
                                 <n n="DescriptionTextID" />
                                 <v n="DescriptionUseParent">false</v>
@@ -1136,13 +1179,14 @@
                             <v n="TypeNodeId" t="Int16">1</v>
                             <v n="TypeNodeIdLong">187975896L</v>
                             <v n="LibraryId">"visuelems, 3.5.13.40 (system)"</v>
+                            <n n="ElementId" />
                             <n n="DisplayTextId" />
                             <n n="DescriptionTextID" />
                             <v n="DescriptionUseParent">false</v>
                           </o>
                           <o t="BasicTypeNode">
                             <v n="Flags">2L</v>
-                            <v n="BasicTypeNodeValue">"PRG_TEST.NcPHandler_VM"</v>
+                            <v n="BasicTypeNodeValue">"PRG_TEST.NC.NcPHandler_VM"</v>
                             <v n="BasicTypeNodeAcceptsExpression">true</v>
                             <n n="BasicTypeNodeFastAccess" />
                             <a n="BasicTypeNodeEnumValues" et="String" />
@@ -1150,6 +1194,7 @@
                             <n n="EnumValueVisibilityAttributeValues" />
                             <n n="EnumValueLibraryId" />
                             <n n="DynamicEnumMemberVisibilityCheckerTypeGuid" />
+                            <n n="EnumValueDisplayName" />
                             <l n="TypeNodeChildren" t="ArrayList" />
                             <o n="TypeNodeType" t="TypeNodeType">
                               <v n="TypeClass" t="TypeClass">Reference</v>
@@ -1159,12 +1204,16 @@
                             <v n="TypeNodeName">"DataContent"</v>
                             <o n="TypeNodeAttributes" t="TypeNodeAttributes2">
                               <v n="AttrFlags">0UL</v>
-                              <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" />
+                              <d n="TypeNodeAttributesData" t="CaseInsensitiveHashtable" ckt="String" cvt="String">
+                                <v>Editor_TypeMatchVariable</v>
+                                <v>true</v>
+                              </d>
                               <v n="ConvDone">true</v>
                             </o>
                             <v n="TypeNodeId" t="Int16">255</v>
                             <v n="TypeNodeIdLong">3671745177L</v>
                             <n n="LibraryId" />
+                            <n n="ElementId" />
                             <n n="DisplayTextId" />
                             <n n="DescriptionTextID" />
                             <v n="DescriptionUseParent">false</v>
@@ -1191,6 +1240,7 @@
                         <v n="TypeNodeId" t="Int16">1</v>
                         <v n="TypeNodeIdLong">2473092364L</v>
                         <n n="LibraryId" />
+                        <n n="ElementId" />
                         <n n="DisplayTextId" />
                         <n n="DescriptionTextID" />
                         <v n="DescriptionUseParent">false</v>
@@ -1210,11 +1260,11 @@
                     </o>
                     <o>
                       <v n="Id">1480420536L</v>
-                      <v n="Value">"465"</v>
+                      <v n="Value">"871"</v>
                     </o>
                     <o>
                       <v n="Id">3671745177L</v>
-                      <v n="Value">"PRG_TEST.NcPHandler_VM"</v>
+                      <v n="Value">"PRG_TEST.NC.NcPHandler_VM"</v>
                     </o>
                   </l>
                 </o>
@@ -1232,11 +1282,15 @@
                 </o>
                 <d n="VisualElementInputActions" t="Hashtable" />
                 <v n="VisualElementIdentification">{650fbdb8-26ea-4eea-9a53-64b03a70d3aa}</v>
-                <v n="VisualElementOwningObjectGuid">{60a04fa7-b873-40c7-8a50-ce53a1bd9bc6}</v>
+                <v n="VisualElementOwningObjectGuid">{868af1aa-845b-06e7-3976-0fc729537f2c}</v>
                 <a n="LMGuids" et="Guid" />
                 <d n="SubElements" t="Hashtable" />
                 <v n="VisualElementId">2</v>
                 <l n="UserManagementAccessRights" t="ArrayList" />
+                <v n="AnimationDuration">"0"</v>
+                <v n="BringToForeground">""</v>
+                <v n="ElementVersion" t="Byte">0</v>
+                <n n="TabOrder" />
               </o>
             </l>
             <v n="BackgroundBitmapId">""</v>
@@ -1250,10 +1304,13 @@
               <v n="BgUseColor">16777215</v>
               <v n="BgUseGradient">false</v>
             </o>
+            <v n="AllElementsHaveDynamicVisibility">false</v>
           </o>
           <o n="GeneratedLMMDescriptions" t="GeneratedLanguageModelEntriesData">
             <o n="GeneratedVisuFbDescription" t="GenericFbDescription">
               <d n="FbMethods" t="CaseInsensitiveHashtable_1" ckt="String" cvt="Guid">
+                <v>AreAllElementsHidden</v>
+                <v>253314bb-bcd1-5dbc-b26d-4c6f7b478d6b</v>
                 <v>ContainsPoint</v>
                 <v>e4dc87e4-2c29-46a2-831b-6f8ac4ed1af2</v>
                 <v>Destruct</v>
@@ -1264,6 +1321,8 @@
                 <v>e64b524d-0f08-4bca-994f-e7644a0a4467</v>
                 <v>FB_Reinit</v>
                 <v>0ca66548-4678-4dee-bf69-59fd5eb9096f</v>
+                <v>GetCallerNamespace</v>
+                <v>891cdcbd-9c1d-5e6d-bcc5-2dddeef58898</v>
                 <v>GetClientData</v>
                 <v>fe6622c0-37ea-4ef8-aa22-0c27408bb1c9</v>
                 <v>GetDialogInterface</v>
@@ -1274,6 +1333,8 @@
                 <v>bc085b3c-e339-4b24-ad89-a63a0e89813e</v>
                 <v>GetElementIdArray</v>
                 <v>b4b20b5a-9c34-406f-a367-063a0c89ca15</v>
+                <v>GetElementName</v>
+                <v>e2aef256-b5ec-5397-977d-82a8a6a6aca7</v>
                 <v>GetInitializeVersion</v>
                 <v>be161405-051a-4206-8449-e4b31cc2ac6c</v>
                 <v>GetInstance</v>
@@ -1290,6 +1351,8 @@
                 <v>ddb1b278-e25b-49b9-a0b2-89497373f9c9</v>
                 <v>GetSurroundingRect</v>
                 <v>982c478e-6028-4c7a-96bd-083025101dfb</v>
+                <v>GetTabOrderIdArray</v>
+                <v>db6e5245-ac78-5b3e-a468-718c0e4d877f</v>
                 <v>GetText</v>
                 <v>2b00cfec-7c01-49c0-b8fb-ab5085dc654d</v>
                 <v>GetTextProperties</v>
@@ -1318,6 +1381,8 @@
                 <v>ddc84edb-c317-47d6-afa3-80f5a6b3571a</v>
                 <v>SetClientData</v>
                 <v>b61697fb-792b-4ee4-9acd-39de4d9d83f5</v>
+                <v>SetContainerSize</v>
+                <v>7b2c3484-81fd-5e5e-8df4-68490b3851dd</v>
                 <v>SetDialogInterface</v>
                 <v>80763029-1214-40ad-9196-8a9354c6dbf9</v>
                 <v>SetResult</v>
@@ -1329,8 +1394,14 @@
                 <v>Update</v>
                 <v>ca3ce1fa-c926-473b-82af-490f67c0f09f</v>
               </d>
+              <d n="FbProperties" t="CaseInsensitiveHashtable_1" ckt="String" cvt="Guid">
+                <v>__getContainer</v>
+                <v>b4429b85-e0e5-5fc6-bdd9-18752af8aef4</v>
+                <v>__getVisu</v>
+                <v>bf14912c-edb4-5ead-8ca7-3b2aa95b4d23</v>
+              </d>
               <v n="FbName">"NotImportant"</v>
-              <v n="FbGuid">{60a04fa7-b873-40c7-8a50-ce53a1bd9bc6}</v>
+              <v n="FbGuid">{868af1aa-845b-06e7-3976-0fc729537f2c}</v>
             </o>
             <v n="GeneratedGlobalVisuVarsGuid">{e1764bf4-5161-49b6-adf3-a020cc2fc336}</v>
             <v n="GeneratedGlobalTheVisuVarlistGuid">{f646c1ac-b8f3-4ad6-a0e9-3aaaaa12998f}</v>
@@ -1345,6 +1416,7 @@
                 <v>FB_Reinit</v>
                 <v>02f05a04-99d2-4a6d-98d4-6c9f9cc7e873</v>
               </d>
+              <d n="FbProperties" t="CaseInsensitiveHashtable_1" />
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{b0c8cdec-78ff-4ecb-b6c8-a5d7465ba6b4}</v>
             </o>
@@ -1377,11 +1449,14 @@
                 <v>a525d111-84e3-45f6-9a27-f272801d87f2</v>
                 <v>ExecuteMouseUp</v>
                 <v>6875d764-f1ca-4f36-b338-f6d2027911b1</v>
+                <v>ExecuteValueChanged</v>
+                <v>d28e4869-f469-4c1a-b517-7af3fcaef524</v>
                 <v>GetElementInfo</v>
                 <v>35ed3c59-dd0f-4bcc-863e-2ae941350027</v>
                 <v>Initialize</v>
                 <v>c7562869-2e6b-4e32-8e54-73d9f6ef3ded</v>
               </d>
+              <d n="FbProperties" t="CaseInsensitiveHashtable_1" />
               <v n="FbName">"NotImportant"</v>
               <v n="FbGuid">{88cafaf2-e6b9-4507-92e8-dfa0cd634975}</v>
             </o>
@@ -1389,23 +1464,10 @@
           </o>
           <v n="LastUsedIdForIdentifier">2</v>
           <o n="TextDocument" t="TextDocument">
-            <a n="TextLines" cet="TextLine">
-              <o>
-                <v n="Id">4L</v>
-                <n n="Tag" />
-                <v n="Text">"VAR_IN_OUT"</v>
-              </o>
-              <o>
-                <v n="Id">5L</v>
-                <n n="Tag" />
-                <v n="Text">"	"</v>
-              </o>
-              <o>
-                <v n="Id">1L</v>
-                <n n="Tag" />
-                <v n="Text">"END_VAR"</v>
-              </o>
-            </a>
+            <v n="TextBlobForSerialisation">"VAR_IN_OUT
+	
+END_VAR"</v>
+            <n n="LineInfoPersistence" />
           </o>
           <v n="GvlCreated">false</v>
           <n n="LMEntry" />
@@ -1432,9 +1494,15 @@
                 <v n="Width">1063</v>
                 <v n="Height">657</v>
               </o>
+              <v>2</v>
+              <o>
+                <v n="Width">1063</v>
+                <v n="Height">657</v>
+              </o>
             </d2>
-            <v n="Version">1</v>
+            <v n="Version">2</v>
           </o>
+          <n n="FrameInterfaceDataModel" />
         </o>
       </Data>
       <TypeList>
@@ -1442,6 +1510,7 @@
         <Type n="BackgroundSettings">{1038f12c-dd4b-4f96-87a3-a350fe8f3552}</Type>
         <Type n="BasicTypeNode">{f7e1e748-ea0f-4fcb-b563-94837ee17e8d}</Type>
         <Type n="Boolean">System.Boolean</Type>
+        <Type n="Byte">System.Byte</Type>
         <Type n="CaseInsensitiveHashtable">{02a85e84-ef2d-46fc-93f2-acb0bbff3eda}</Type>
         <Type n="CaseInsensitiveHashtable_1">{7df88604-7ac5-4e36-91c4-55e4fdad3e68}</Type>
         <Type n="ComplexInput">{1de566f6-72a7-494c-9353-9a418172c96e}</Type>
@@ -1458,7 +1527,6 @@
         <Type n="String">System.String</Type>
         <Type n="StructuredTypeNode">{503c5b2e-e80e-4ee7-ae00-c5b93a62b1aa}</Type>
         <Type n="TextDocument">{f3878285-8e4f-490b-bb1b-9acbb7eb04db}</Type>
-        <Type n="TextLine">{a5de0b0b-1cb5-4913-ac21-9d70293ec00d}</Type>
         <Type n="TypeClass">{16f7aa24-038f-444e-9d81-b001bc091d35}</Type>
         <Type n="TypeNodeAttributes2">{c1464dbe-c10d-4717-be8f-63efe8638434}</Type>
         <Type n="TypeNodeType">{b12a9636-e818-4598-ae0d-fb6a2446102c}</Type>
