@@ -2,7 +2,8 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.22" TcProjectVariant="Machine">
 	<Project ProjectGUID="{73F3E061-A787-4B18-8A2C-33297C388B7E}" TargetNetId="192.168.1.11.1.1" Target64Bit="true" RelativeTargetNetId="true" RelativeIpAddresses="true" ShowHideConfigurations="#x3c6">
 		<System>
-			<Settings>
+			<Settings MaxCpus="4" NonWinCpus="2" RouterMemory="134217728">
+				<Cpu CpuId="3"/>
 				<IoIdleTask Priority="10"/>
 			</Settings>
 			<Tasks>

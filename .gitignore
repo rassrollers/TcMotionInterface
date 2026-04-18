@@ -38,7 +38,7 @@ LineIDs.dbg.bak
 # exclude not required folders
 **/_Boot/
 **/_CompileInfo/
-**/_Libraries/
+#**/_Libraries/
 **/_ModuleInstall/
 **/_Deployment/
 **/_Repository/
