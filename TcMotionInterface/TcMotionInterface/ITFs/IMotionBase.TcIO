@@ -44,18 +44,18 @@ END_VAR
       <Declaration><![CDATA[METHOD ResetError
 ]]></Declaration>
     </Method>
-    <Method Name="Run" Id="{c02b0554-d0ef-00fd-350f-874c242458a8}">
-      <Declaration><![CDATA[METHOD Run
-VAR_INPUT
-	EnableAxis: BOOL;
-END_VAR
-]]></Declaration>
-    </Method>
     <Method Name="StopMovement" Id="{09109740-849b-0e06-030d-29d4ea0dbb2c}">
       <Declaration><![CDATA[METHOD StopMovement : BOOL;
 VAR_INPUT
 	Deceleration	: LREAL;
 	Jerk			: LREAL;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="UpdateAxis" Id="{c02b0554-d0ef-00fd-350f-874c242458a8}">
+      <Declaration><![CDATA[METHOD UpdateAxis
+VAR_INPUT
+	EnableAxis: BOOL;
 END_VAR
 ]]></Declaration>
     </Method>

@@ -7,7 +7,6 @@ VAR
 	MasterAxis		: REFERENCE TO AXIS_REF;
 	
 	McPower			: MC_Power;
-	McStatus		: MC_ReadStatus;
 	McReset			: MC_Reset;
 	McHalt			: MC_Halt;
 	McStop			: MC_Stop;
@@ -345,30 +344,6 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="Run" Id="{8a1d159e-3327-0fbc-2eef-1493da8fc612}">
-      <Declaration><![CDATA[METHOD Run
-VAR_INPUT
-	EnableAxis: BOOL;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[McPower(
-	Axis:= Axis, 
-	Enable:= EnableAxis, 
-	Enable_Positive:= EnableAxis, 
-	Enable_Negative:= EnableAxis, 
-);
-
-McStatus(
-	Axis:= Axis, 
-	Enable:= TRUE
-);
-
-MotionCase();
-ErrorHandling();
-]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="StopMovement" Id="{f0a3036e-36af-00ad-3315-39b599db4e19}">
       <Declaration><![CDATA[METHOD StopMovement : BOOL;
 VAR_INPUT
@@ -380,6 +355,26 @@ END_VAR
         <ST><![CDATA[McStop.Deceleration:= Deceleration; 
 McStop.Jerk:= Jerk;
 CurrentState := MotionHandlingState.Stop;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="UpdateAxis" Id="{8a1d159e-3327-0fbc-2eef-1493da8fc612}">
+      <Declaration><![CDATA[METHOD UpdateAxis
+VAR_INPUT
+	EnableAxis: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Axis.ReadStatus();
+McPower(
+	Axis:= Axis, 
+	Enable:= EnableAxis, 
+	Enable_Positive:= EnableAxis, 
+	Enable_Negative:= EnableAxis, 
+);
+
+MotionCase();
+ErrorHandling();
 ]]></ST>
       </Implementation>
     </Method>
