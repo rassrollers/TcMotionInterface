@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="TcDriveParameterHandler" Id="{c7bc9c9b-78df-0fb0-1e9e-5ed98aa64d8e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TcDriveParameterHandler IMPLEMENTS IDriveParameterHandler
+VAR
+	_xmlHandler: TcCoeXmlHandler;
+	_writerSdo: FB_EcCoESdoWrite;
+	_writerAds: ADSWRITE;
+	_error: BOOL;
+	_errorString: STRING[TcMotionInterface_Param.ErrorStringSize];
+	_case: DriveParameterHandlerState := DriveParameterHandlerState.Idle;
+	
+	_driveParameterSet: DriveXmlParameter;
+	_endOfFile: BOOL;
+	_numberOfParameter: UDINT;
+	_isWritingCan: BOOL;
+	_isWritingEtc: BOOL;
+	_retries: UDINT;
+END_VAR
+VAR CONSTANT
+	CANOPENINDEX: UINT := 16#1000;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Error" Id="{0b2469c7-44f6-0cd6-2dcf-93062d08c239}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{d8c7b347-f7cc-0913-3693-40261587c0aa}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := _error;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetError" Id="{75265058-d642-0a77-1855-57c20ad779d3}">
+      <Declaration><![CDATA[PROPERTY GetError : STRING[TcMotionInterface_Param.ErrorStringSize]]]></Declaration>
+      <Get Name="Get" Id="{f71e1a7a-5297-0d05-0e0d-957e450d72ae}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetError := _errorString;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="ResetError" Id="{0673a0fa-1ab9-0258-03c4-1af6eb4a6b25}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_xmlHandler.ResetError();
+_error := FALSE;
+_errorString := ('');
+_case := DriveParameterHandlerState.Idle;
+_numberOfParameter := 0;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WriteCanOpenParameters" Id="{af8fe416-647a-0956-2946-b62ac5d9c6a5}">
+      <Declaration><![CDATA[// Write CAN Open parameters to a CAN device
+METHOD WriteCanOpenParameters : BOOL  // Return TRUE if successful
+VAR_INPUT
+	FilePath: STRING(255);  // Path to XML file, e.g. /home/Administrator/driveA.xml
+	NetId: STRING(23);  // NetID of device in IO list
+	CanId: UINT;  // CAN node ID
+END_VAR
+VAR_OUTPUT
+	NumberOfParameterWritten: UDINT;  // Return number of parameter written to device
+END_VAR
+VAR
+	xmlExtensionCheck: STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT _isWritingEtc THEN
+	CASE _case of
+		DriveParameterHandlerState.Idle:
+			xmlExtensionCheck := RIGHT(STR:= FilePath, SIZE:= 4);
+			IF NOT (xmlExtensionCheck = '.xml') THEN
+				_error := TRUE;
+				_errorString := 'Error: File path did not point to a .xml file';
+				_case := DriveParameterHandlerState.Error;
+			ELSIF NetId = '' THEN
+				_error := TRUE;
+				_errorString := 'Error: NetID was not set';
+				_case := DriveParameterHandlerState.Error;
+			ELSIF CanId = 0 THEN
+				_error := TRUE;
+				_errorString := 'Error: CAN node ID was not set';
+				_case := DriveParameterHandlerState.Error;
+			ELSE
+				_isWritingCan := TRUE;
+				_numberOfParameter := 0;
+				_case := DriveParameterHandlerState.LoadParameters;
+			END_IF
+			
+		DriveParameterHandlerState.LoadParameters:
+			IF _xmlHandler.LoadXmlFile(FilePath:= FilePath) THEN
+				_case := DriveParameterHandlerState.GetParameters;
+			END_IF
+			
+		DriveParameterHandlerState.GetParameters:
+			_driveParameterSet := _xmlHandler.GetParameterSet(EndOfFile=> _endOfFile);
+			IF _endOfFile THEN
+				_xmlHandler.CloseXmlFile();
+				_case := DriveParameterHandlerState.Done;
+			ELSIF _driveParameterSet.Index <> 0 THEN
+				_retries := 0;
+				_case := DriveParameterHandlerState.DownloadParameters;
+			END_IF
+			
+		DriveParameterHandlerState.DownloadParameters:
+			_writerAds(NETID:= NetId, 
+				PORT:= CANOPENINDEX + CanId, 
+				IDXOFFS:= _driveParameterSet.SubIndex, 
+				IDXGRP:= _driveParameterSet.Index, 
+				SRCADDR:= ADR(_driveParameterSet.Data), 
+				LEN:= _driveParameterSet.Length, 
+				WRITE:= TRUE
+			);
+			IF NOT _writerAds.BUSY THEN
+				_writerAds(WRITE:= FALSE);
+				IF _writerAds.ERR THEN
+					IF _writerAds.ERRID = 16#80450719 THEN
+						_retries := _retries + 1;
+						IF _retries > 5 THEN
+							_error := TRUE;
+							_errorString := CONCAT('Error: Failed after retrying to write $'', CONCAT(_driveParameterSet.Comment, '$' to drive'));
+							_case := DriveParameterHandlerState.Error;
+						END_IF
+					ELSE
+						_error := TRUE;
+						_errorString := CONCAT('Error: Failed to write $'', CONCAT(_driveParameterSet.Comment, '$' to drive'));
+						_case := DriveParameterHandlerState.Error;
+					END_IF
+				ELSE
+					_numberOfParameter := _numberOfParameter + 1;
+					_case := DriveParameterHandlerState.GetParameters;
+				END_IF
+			END_IF
+			
+		DriveParameterHandlerState.Done:
+			_isWritingCan := FALSE;
+			NumberOfParameterWritten := _numberOfParameter;
+			_case := DriveParameterHandlerState.Idle;
+			WriteCanOpenParameters := TRUE;
+			
+	END_CASE
+	
+	IF _xmlHandler.Error THEN
+		_error := TRUE;
+		_errorString := _xmlHandler.GetError;
+		_case := DriveParameterHandlerState.Error;
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WriteEtcDriveParameter" Id="{3eaeeadb-8eea-009a-20c6-6336adda3f7b}">
+      <Declaration><![CDATA[// Write COE parameters to a EtherCAT device
+METHOD WriteEtcDriveParameter : BOOL  // Return TRUE if successful
+VAR_INPUT
+	FilePath: STRING(255);  // Path to XML file, e.g. /home/Administrator/driveA.xml
+	NetId: STRING(23);  // NetID of device in IO list
+	EtcAddress: UINT;  // EtherCAT address / Ams port
+END_VAR
+VAR_OUTPUT
+	NumberOfParameterWritten: UDINT;  // Return number of parameter written to device
+END_VAR
+
+VAR
+	xmlExtensionCheck: STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT _isWritingCan THEN
+	CASE _case of
+		DriveParameterHandlerState.Idle:
+			xmlExtensionCheck := RIGHT(STR:= FilePath, SIZE:= 4);
+			IF NOT (xmlExtensionCheck = '.xml') THEN
+				_error := TRUE;
+				_errorString := 'Error: File path did not point to a .xml file';
+				_case := DriveParameterHandlerState.Error;
+			ELSIF NetId = '' THEN
+				_error := TRUE;
+				_errorString := 'Error: NetID was not set';
+				_case := DriveParameterHandlerState.Error;
+			ELSIF EtcAddress = 0 THEN
+				_error := TRUE;
+				_errorString := 'Error: EtherCAT address was not set';
+				_case := DriveParameterHandlerState.Error;
+			ELSE
+				_isWritingEtc := TRUE;
+				_numberOfParameter := 0;
+				_case := DriveParameterHandlerState.LoadParameters;
+			END_IF
+			
+		DriveParameterHandlerState.LoadParameters:
+			IF _xmlHandler.LoadXmlFile(FilePath:= FilePath) THEN
+				_case := DriveParameterHandlerState.GetParameters;
+			END_IF
+			
+		DriveParameterHandlerState.GetParameters:
+			_driveParameterSet := _xmlHandler.GetParameterSet(EndOfFile=> _endOfFile);
+			IF _endOfFile THEN
+				_xmlHandler.CloseXmlFile();
+				_case := DriveParameterHandlerState.Done;
+			ELSIF _driveParameterSet.Index <> 0 THEN
+				_case := DriveParameterHandlerState.DownloadParameters;
+			END_IF
+			
+		DriveParameterHandlerState.DownloadParameters:
+			_writerSdo(sNetId:= NetId, 
+				nSlaveAddr:= EtcAddress, 
+				nSubIndex:= _driveParameterSet.SubIndex, 
+				nIndex:= _driveParameterSet.Index, 
+				pSrcBuf:= ADR(_driveParameterSet.Data), 
+				cbBufLen:= _driveParameterSet.Length, 
+				bExecute:= TRUE
+			);
+			IF NOT _writerSdo.bBusy THEN
+				_writerSdo(bExecute:= FALSE);
+				IF _writerSdo.bError THEN
+					_error := TRUE;
+					_errorString := CONCAT('Error: Failed to write $'', CONCAT(_driveParameterSet.Comment, '$' to drive'));
+					_case := DriveParameterHandlerState.Error;
+				ELSE
+					_numberOfParameter := _numberOfParameter + 1;
+					_case := DriveParameterHandlerState.GetParameters;
+				END_IF
+			END_IF
+			
+		DriveParameterHandlerState.Done:
+			_isWritingEtc := FALSE;
+			NumberOfParameterWritten := _numberOfParameter;
+			_case := DriveParameterHandlerState.Idle;
+			WriteEtcDriveParameter := TRUE;
+			
+	END_CASE
+	
+	IF _xmlHandler.Error THEN
+		_error := TRUE;
+		_errorString := _xmlHandler.GetError;
+		_case := DriveParameterHandlerState.Error;
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

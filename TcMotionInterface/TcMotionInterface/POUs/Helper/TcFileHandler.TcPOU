@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="TcFileHandler" Id="{89185643-aa2b-07f7-2163-e35dbf927840}" SpecialFunc="None">
+    <Declaration><![CDATA[// TwinCAT implementation for the file handler interface
+FUNCTION_BLOCK TcFileHandler 
+VAR
+	_openFile: FB_FileOpen;
+	_closeFile: FB_FileClose;
+	_readFile: FB_FileRead;
+	_writeFile: FB_FileWrite;
+	_renameFile: FB_FileRename;
+	_deleteFile: FB_FileDelete;
+
+	_fHandle: UINT;
+	_Error: BOOL;
+	_ErrorString: STRING(TcMotionInterface_Param.ErrorStringSize);
+	_state: (Idle, Deleting, DoesExist, Reading, Renaming, Writing, Opening, Closing, Copying, Moving, FileError);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="CloseFile" Id="{69698e3f-87a1-07e5-2fe0-1fb08a63aee6}">
+      <Declaration><![CDATA[METHOD PRIVATE CloseFile : BOOL  // Return TRUE when done closing
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_closeFile( 
+	hFile:= _fHandle, 
+	bExecute:= TRUE
+);
+IF NOT _closeFile.bBusy THEN
+	IF _closeFile.bError THEN
+		_Error := TRUE;
+		CASE _closeFile.nErrId OF
+			E_AdsErr.DEVICE_INVALIDOFFSET:
+				_ErrorString := 'FILE CLOSE ERROR: Invalid or unknown file handle';
+			E_AdsErr.DEVICE_INCOMPATIBLE:
+				_ErrorString := 'FILE CLOSE ERROR: File was opened with wrong method';
+			ELSE
+				_ErrorString := CONCAT('FILE CLOSE ERROR: Unspecified error: ', TO_STRING(_closeFile.nErrId));
+		END_CASE
+		_state := FileError;
+	ELSE
+		CloseFile := TRUE;
+	END_IF
+	_closeFile(bExecute:= FALSE);
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DeleteFile" Id="{b75fc7c2-43cc-0115-1b7c-86492b65da16}">
+      <Declaration><![CDATA[METHOD DeleteFile: BOOL  // Return TRUE when done deleting
+VAR_INPUT
+	FilePath	: STRING;  // Path to the file location, e.g. 'home/Administrator'
+	FileName	: STRING;  // File name, e.g. 'settings.xml'                      
+END_VAR
+VAR_INST
+	tempFile	: STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF _state = Idle THEN
+	tempFile := SEL(RIGHT(FilePath, 1) = '/',CONCAT('/', FileName), FileName);
+	_state := Deleting;
+ELSIF _state = Deleting THEN
+	_deleteFile(
+		sPathName:= CONCAT(FilePath, tempFile), 
+		ePath:= E_OpenPath.PATH_GENERIC, 
+		bExecute:= TRUE
+	);
+	IF NOT _deleteFile.bBusy THEN
+		IF _deleteFile.bError THEN
+			_Error := TRUE;
+			IF _deleteFile.nErrId = E_AdsErr.DEVICE_NOTFOUND THEN
+				_ErrorString := 'FILE DELETE ERROR: File not found';
+			ELSE
+				_ErrorString := CONCAT('FILE DELETE ERROR: Unspecified error', TO_STRING(_deleteFile.nErrId));
+			END_IF
+			tempFile := '';
+			_state := FileError;
+		ELSE
+			tempFile := '';
+			DeleteFile := TRUE;
+			_state := Idle;
+		END_IF
+		_deleteFile(bExecute:= FALSE);
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Error" Id="{3eb8e0c9-cdfb-045e-339a-4de1161548ca}">
+      <Declaration><![CDATA[// Return TRUE if an error has occurred
+PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{2d6df31f-4b40-0733-1df2-711b3f665359}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := _Error;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetError" Id="{b635386d-061e-044a-0ee8-c28ea53f4f09}">
+      <Declaration><![CDATA[// Return a string of the error
+PROPERTY GetError : STRING
+]]></Declaration>
+      <Get Name="Get" Id="{88ec0709-d9f4-0ee0-1fb4-40a5709f774d}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetError := _ErrorString;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="OpenFile" Id="{3cde1102-06cd-0626-0a38-3e5b977ad53b}">
+      <Declaration><![CDATA[METHOD PRIVATE OpenFile : BOOL  // Return TRUE when done opening
+VAR_INPUT
+	FilePath	: STRING;  // Path to the file location, e.g. 'home/Administrator'
+	FileName	: STRING;  // File name, e.g. 'settings.xml'                      
+	Mode		: DWORD;  // The mode the file should be open in (Read, Write, Append)
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_openFile( 
+	sPathName:= CONCAT(FilePath, FileName), 
+	nMode:= Mode, 
+	ePath:= E_OpenPath.PATH_GENERIC, 
+	bExecute:= TRUE,
+	hFile=> _fHandle
+);
+IF NOT _openFile.bBusy THEN
+	IF _openFile.bError THEN
+		_Error := TRUE;
+		CASE _openFile.nErrId OF
+			E_AdsErr.DEVICE_INVALIDOFFSET:
+				_ErrorString := 'FILE OPEN ERROR: Unknown or invalid nMode or ePath parameter';
+			E_AdsErr.DEVICE_NOTFOUND:
+				_ErrorString := 'FILE OPEN ERROR: File not found. Invalid file name or path';
+			E_AdsErr.DEVICE_NOMOREHDLS:
+				_ErrorString := 'FILE OPEN ERROR: No further free file handles';
+			ELSE
+				_ErrorString := CONCAT('FILE OPEN ERROR: Unspecified error: ', TO_STRING(_openFile.nErrId));
+		END_CASE
+		_state := FileError;
+	ELSE
+		OpenFile := TRUE;
+	END_IF
+	_openFile(bExecute:= FALSE);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ReadFile" Id="{4bcecfc0-8bda-0ca8-153b-1b973ba02cc2}">
+      <Declaration><![CDATA[METHOD ReadFile: BOOL  // Return TRUE when done
+VAR_INPUT
+	FilePath	: STRING;  // Path to the file location, e.g. 'home/Administrator'
+	FileName	: STRING;  // File name, e.g. 'settings.xml'                      
+	DataPointer	: POINTER TO BYTE;  // Pointer to the data
+	DataLength	: UDINT;  // Size of the data
+END_VAR
+VAR_OUTPUT
+	ReadLength	: UDINT;  // Number of characters read in the file
+END_VAR
+VAR_INST
+	tempFile	: STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF _state = Idle THEN
+	tempFile := SEL(RIGHT(FilePath, 1) = '/',CONCAT('/', FileName), FileName);
+	_state := Opening;
+ELSIF _state = Opening THEN
+	IF OpenFile(FilePath:= FilePath, FileName:= tempFile, Mode:= FOPEN_MODEREAD) THEN
+		_state := Reading;
+	END_IF
+ELSIF _state = Reading THEN
+	_readFile(
+		hFile:= _fHandle, 
+		pReadBuff:= DataPointer, 
+		cbReadLen:= DataLength, 
+		bExecute:= TRUE, 
+	);
+	IF NOT _readFile.bBusy THEN
+		IF _readFile.bError THEN
+			_Error := TRUE;
+			CASE _readFile.nErrId OF
+				E_AdsErr.DEVICE_INVALIDOFFSET:
+					_ErrorString := 'FILE READ ERROR: Invalid or unknown file handle';
+				E_AdsErr.DEVICE_NOMEMORY:
+					_ErrorString := 'FILE READ ERROR: No memory for read buffer';
+				E_AdsErr.DEVICE_INCOMPATIBLE:
+					_ErrorString := 'FILE READ ERROR: File was opened with wrong method';
+				ELSE
+					_ErrorString := CONCAT('FILE READ ERROR: Unspecified error: ', TO_STRING(_readFile.nErrId));
+			END_CASE
+			tempFile := '';
+			_state := FileError;
+		ELSE
+			_state := Closing;
+		END_IF
+		_readFile(bExecute:= FALSE);
+	END_IF
+ELSIF _state = Closing THEN
+	IF CloseFile() THEN
+		ReadLength := _readFile.cbRead;
+		tempFile := '';
+		ReadFile := TRUE;
+		_state := Idle;
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RenameFile" Id="{31417a26-5751-0ec4-15ae-e0ca3c799f4e}">
+      <Declaration><![CDATA[METHOD RenameFile: BOOL  // Return TRUE when done renaming
+VAR_INPUT
+	FilePath	: STRING;  // Path to the file location, e.g. 'home/Administrator'
+	FileName	: STRING;  // File name, e.g. 'settings.xml'                      
+	NewName		: STRING;  // New file name, e.g. 'settings_backup.xml'
+END_VAR
+VAR_INST
+	tempFile1	: STRING;
+	tempFile2	: STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF _state = Idle THEN
+	tempFile1 := SEL(RIGHT(FilePath, 1) = '/',CONCAT('/', FileName), FileName);
+	tempFile2 := SEL(RIGHT(FilePath, 1) = '/',CONCAT('/', NewName), NewName);
+	_state := Renaming;
+ELSIF _state = Renaming THEN
+	_renameFile( 
+		sOldName:= CONCAT(FilePath, CONCAT('/', tempFile1)), 
+		sNewName:= CONCAT(FilePath, CONCAT('/', tempFile2)), 
+		ePath:= E_OpenPath.PATH_GENERIC, 
+		bExecute:= TRUE
+	);
+	IF NOT _renameFile.bBusy THEN
+		IF _renameFile.bError THEN
+			_Error := TRUE;
+			IF _renameFile.nErrId = E_AdsErr.DEVICE_NOTFOUND THEN
+				_ErrorString := 'FILE RENAME ERROR: File not found';
+			ELSE
+				_ErrorString := CONCAT('FILE RENAME ERROR: Unspecified error: ', TO_STRING(_renameFile.nErrId));
+			END_IF
+			tempFile1:= tempFile2 := '';
+			_state := FileError;
+		ELSE
+			tempFile1:= tempFile2 := '';
+			RenameFile := TRUE;
+			_state := Idle;
+		END_IF
+		_renameFile(bExecute:= FALSE);
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetError" Id="{92930b34-d244-08db-0074-d827cd655f69}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_openFile(bExecute:= FALSE);
+_closeFile(bExecute:= FALSE);
+_readFile(bExecute:= FALSE);
+_writeFile(bExecute:= FALSE);
+_deleteFile(bExecute:= FALSE);
+_renameFile(bExecute:= FALSE);
+
+_Error := FALSE;
+_ErrorString := '';
+_state := Idle;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WriteFile" Id="{f3a976e3-772b-0203-2d66-d2a90d2081b7}">
+      <Declaration><![CDATA[METHOD WriteFile: BOOL  // Return TRUE when done
+VAR_INPUT
+	FilePath	: STRING;  // Path to the file location, e.g. 'home/Administrator'
+	FileName	: STRING;  // File name, e.g. 'settings.xml'                      
+	DataPointer	: POINTER TO BYTE;  // Pointer to the data
+	DataLength	: UDINT;  // Size of the data
+END_VAR
+VAR_OUTPUT
+	WriteLength	: UDINT;  // Number of characters written in the file
+END_VAR
+VAR_INST
+	tempFile	: STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF _state = Idle THEN
+	tempFile := SEL(RIGHT(FilePath, 1) = '/',CONCAT('/', FileName), FileName);
+	_state := Opening;
+ELSIF _state = Opening THEN
+	IF OpenFile(FilePath:= FilePath, FileName:= tempFile, Mode:= FOPEN_MODEWRITE) THEN
+		_state := Writing;
+	END_IF
+ELSIF _state = Writing THEN
+	_writeFile( 
+		hFile:= _fHandle, 
+		pWriteBuff:= DataPointer, 
+		cbWriteLen:= DataLength, 
+		bExecute:= TRUE,
+	);
+	IF NOT _writeFile.bBusy THEN
+		IF _writeFile.bError THEN
+			_Error := TRUE;
+			CASE _writeFile.nErrId OF
+				E_AdsErr.DEVICE_INVALIDOFFSET:
+					_ErrorString := 'FILE WRITE ERROR: Invalid or unknown file handle';
+				E_AdsErr.DEVICE_INCOMPATIBLE:
+					_ErrorString := 'FILE WRITE ERROR: File was opened with wrong method';
+				ELSE
+					_ErrorString := CONCAT('FILE WRITE ERROR: Unspecified error: ', TO_STRING(_writeFile.nErrId));
+			END_CASE
+			tempFile := '';
+			_state := FileError;
+		ELSE
+			_state := Closing;
+		END_IF
+		_writeFile(bExecute:= FALSE);
+	END_IF
+ELSIF _state = Closing THEN
+	IF CloseFile() THEN
+		WriteLength := _writeFile.cbWrite;
+		tempFile := '';
+		WriteFile := TRUE;
+		_state := Idle;
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

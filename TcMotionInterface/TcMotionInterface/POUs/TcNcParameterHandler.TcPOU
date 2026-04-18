@@ -1,0 +1,290 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="TcNcParameterHandler" Id="{81f902e2-ec24-0e96-1824-3204ffd99ce3}" SpecialFunc="None">
+    <Declaration><![CDATA[// When changing parameters in the NC axis online and downloading them, you have to read twice to get the correct value.
+FUNCTION_BLOCK TcNcParameterHandler IMPLEMENTS INcParameterHandler
+VAR
+	_reader: ADSREAD;
+	_writer: ADSWRITE;
+	_error: BOOL;
+	_errorString: STRING[TcMotionInterface_Param.ErrorStringSize];
+	_case: NcParameterHandlerState;
+END_VAR
+VAR CONSTANT
+	NcPort: UINT := 501;  // AMS port for NC-Task SAF
+	Timeout: TIME := T#3S;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Error" Id="{3f7e84e8-3dbc-0a89-10c3-a07117e91914}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{c750c3cc-446a-027d-3638-957becc3a737}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := _error;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="ErrorHandling" Id="{f328e1ae-6b49-005e-3b30-cdc667a7e481}">
+      <Declaration><![CDATA[// NC error codes: https://infosys.beckhoff.com/english.php?content=../content/1033/tc3ncerrcode/1521556875.html&id=2911757239699425890
+METHOD PRIVATE ErrorHandling
+VAR_INPUT
+	ParameterName: STRING;
+	ErrorID: DWORD;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE ErrorID OF
+	16#4300..16#433A:
+		_errorString := CONCAT('NcAxisParameterHandler: Value outside allowed range for $'', CONCAT(ParameterName, CONCAT('$', NC axis error: ', DWORD_TO_HEXSTR(in:= ErrorID, iPrecision:= 4, bLoCase:= FALSE))));
+	16#4400..16#4429:
+		_errorString := CONCAT('NcAxisParameterHandler: Value outside allowed range for $'', CONCAT(ParameterName, CONCAT('$', NC encoder error: ', DWORD_TO_HEXSTR(in:= ErrorID, iPrecision:= 4, bLoCase:= FALSE))));
+	16#4500..16#452D:
+		_errorString := CONCAT('NcAxisParameterHandler: Value outside allowed range for $'', CONCAT(ParameterName, CONCAT('$', NC controller error: ', DWORD_TO_HEXSTR(in:= ErrorID, iPrecision:= 4, bLoCase:= FALSE))));
+	16#4600..16#4625:
+		_errorString := CONCAT('NcAxisParameterHandler: Value outside allowed range for $'', CONCAT(ParameterName, CONCAT('$', NC drive error: ', DWORD_TO_HEXSTR(in:= ErrorID, iPrecision:= 4, bLoCase:= FALSE))));
+	ELSE
+		_errorString := CONCAT('NcAxisParameterHandler: Error $'', CONCAT(ParameterName, CONCAT('$', ADS error: ', DWORD_TO_HEXSTR(in:= ErrorID, iPrecision:= 4, bLoCase:= FALSE))));
+END_CASE
+_error := TRUE;	
+_case := NcParameterHandlerState.Error;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="GetError" Id="{6b51168a-2ed6-0a0e-2ff2-2893d44ca047}">
+      <Declaration><![CDATA[PROPERTY GetError : STRING[TcMotionInterface_Param.ErrorStringSize]
+]]></Declaration>
+      <Get Name="Get" Id="{c8bef232-4857-0a89-169a-6709495e7f1f}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetError := _errorString;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="ReadNcParameters" Id="{c800c230-3182-0248-13e7-022e6264405f}">
+      <Declaration><![CDATA[// Read the NC motion parameters from the Motion controller
+METHOD ReadNcParameters : BOOL  // Return TRUE if successful
+VAR_INPUT
+	NcParameters: REFERENCE TO NcParameter;  // REF to NC parameters
+	NcAxisID: DWORD;  // The NC axis ID
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE _case OF 
+	NcParameterHandlerState.Idle:
+		IF __ISVALIDREF(NcParameters) THEN
+			_case := NcParameterHandlerState.ReadAxis;
+		END_IF
+	
+	//NcParameterHandlerState.ReadGroup:  // Can't be used without the GroupID
+	//	IF ReadParameterSet(Parameters:= NcParameters.GroupParameter.Parameters, IndexGroup:= NcParameters.GroupParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+	//		_case := NcParameterHandlerState.ReadAxis;
+	//	END_IF
+		
+	NcParameterHandlerState.ReadAxis:
+		IF ReadParameterSet(Parameters:= NcParameters.AxisParameter.Parameters, IndexGroup:= NcParameters.AxisParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.ReadEncoder;
+		END_IF
+		
+	NcParameterHandlerState.ReadEncoder:
+		IF ReadParameterSet(Parameters:= NcParameters.EncoderParameter.Parameters, IndexGroup:= NcParameters.EncoderParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.ReadController;
+		END_IF
+		
+	NcParameterHandlerState.ReadController:
+		IF ReadParameterSet(Parameters:= NcParameters.ControllerParameter.Parameters, IndexGroup:= NcParameters.ControllerParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.ReadDrive;
+		END_IF
+		
+	NcParameterHandlerState.ReadDrive:
+		IF ReadParameterSet(Parameters:= NcParameters.DriveParameter.Parameters, IndexGroup:= NcParameters.DriveParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.Idle;
+			ReadNcParameters := TRUE;
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ReadParameterSet" Id="{19e97eab-9353-0005-0b72-b718a243ca31}">
+      <Declaration><![CDATA[METHOD PRIVATE ReadParameterSet : BOOL
+VAR_IN_OUT
+	Parameters: ARRAY[*] OF ParameterSet;
+END_VAR
+VAR_INPUT
+	IndexGroup: UDINT;
+	NcAxisID: DWORD;
+END_VAR
+VAR_INST
+	readCounter: DINT;
+	readLength: DINT;
+	reading: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT reading THEN
+	readLength := UPPER_BOUND(Parameters, 1);
+	readCounter := 0;
+	reading := TRUE;
+ELSE
+	IF readCounter > readLength THEN
+		reading := FALSE;
+		ReadParameterSet := TRUE;
+		RETURN;
+	ELSIF Parameters[readCounter].IndexOffset = 0 THEN
+		reading := FALSE;
+		_error := TRUE;
+		_errorString := CONCAT('NcAxisParameterHandler: Read next offset index was empty at array index: ', DINT_TO_STRING(readCounter));
+		_case := NcParameterHandlerState.Error;
+		RETURN;
+	END_IF
+	
+	_reader(
+		NETID:= '',
+		PORT:= NcPort,
+		IDXGRP:= IndexGroup + NcAxisID,
+		IDXOFFS:= Parameters[readCounter].IndexOffset,
+		LEN:= Parameters[readCounter].Length,
+		DESTADDR:= ADR(Parameters[readCounter].Value),
+		READ:= TRUE,
+		TMOUT:= Timeout,
+	);
+	
+	IF NOT _reader.BUSY THEN
+		_reader(READ:= FALSE);
+		readCounter := readCounter + 1;
+		IF _reader.ERR THEN
+			reading := FALSE;
+			ErrorHandling(ParameterName:= Parameters[readCounter].Name, ErrorID:= _reader.ERRID);
+		END_IF
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetError" Id="{bffffe56-75e6-08ac-1d34-aa87ce74693d}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_error := FALSE;
+_errorString := '';
+_reader(READ:= FALSE);
+_writer(WRITE:= FALSE);
+_case := NcParameterHandlerState.Idle;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WriteNcParameters" Id="{281c73b8-eb59-0706-30b8-4767ec378169}">
+      <Declaration><![CDATA[// Write the NC motion parameters to the Motion controller
+METHOD WriteNcParameters : BOOL  // Return TRUE if successful
+VAR_INPUT
+	NcParameters: REFERENCE TO NcParameter;  // REF to NC parameters
+	NcAxisID: DWORD;  // The NC axis ID
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE _case OF 
+	NcParameterHandlerState.Idle:
+		IF __ISVALIDREF(NcParameters) THEN
+			_case := NcParameterHandlerState.WriteAxis;
+		END_IF
+		
+	//NcParameterHandlerState.WriteGroup:  // Can't be used without the GroupID
+	//	IF WriteParameterSet(Parameters:= NcParameters.GroupParameter.Parameters, NcParameters.GroupParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+	//		_case := NcParameterHandlerState.WriteAxis;
+	//	END_IF
+		
+	NcParameterHandlerState.WriteAxis:
+		IF WriteParameterSet(Parameters:= NcParameters.AxisParameter.Parameters, NcParameters.AxisParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.WriteEncoder;
+		END_IF
+		
+	NcParameterHandlerState.WriteEncoder:
+		IF WriteParameterSet(Parameters:= NcParameters.EncoderParameter.Parameters, NcParameters.EncoderParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.WriteController;
+		END_IF
+		
+	NcParameterHandlerState.WriteController:
+		IF WriteParameterSet(Parameters:= NcParameters.ControllerParameter.Parameters, NcParameters.ControllerParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.WriteDrive;
+		END_IF
+		
+	NcParameterHandlerState.WriteDrive:
+		IF WriteParameterSet(Parameters:= NcParameters.DriveParameter.Parameters, NcParameters.DriveParameter.IndexGroup, NcAxisID:= NcAxisID) THEN
+			_case := NcParameterHandlerState.Idle;
+			WriteNcParameters := TRUE;
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WriteParameterSet" Id="{c015ab13-e0ce-0f8c-1a18-e48155cc3fe6}">
+      <Declaration><![CDATA[METHOD PRIVATE WriteParameterSet : BOOL
+VAR_IN_OUT
+	Parameters: ARRAY[*] OF ParameterSet;
+END_VAR
+VAR_INPUT
+	IndexGroup: UDINT;
+	NcAxisID: DWORD;
+END_VAR
+VAR_INST
+	writeCounter: DINT;
+	writeLength: DINT;
+	writing: BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT writing THEN
+	writeLength := UPPER_BOUND(Parameters, 1);
+	writeCounter := 0;
+	writing := TRUE;
+ELSE
+	IF NOT _writer.BUSY THEN
+		REPEAT
+			IF Parameters[writeCounter].ReadOnly THEN
+				writeCounter := writeCounter + 1;
+			END_IF
+			
+			IF writeCounter > writeLength THEN
+				writing := FALSE;
+				WriteParameterSet := TRUE;
+				RETURN;
+			ELSIF Parameters[writeCounter].IndexOffset = 0 THEN
+				writing := FALSE;
+				_error := TRUE;
+				_errorString := CONCAT('NcAxisParameterHandler: Write next offset index was empty at array index: ', DINT_TO_STRING(writeCounter));
+				_case := NcParameterHandlerState.Error;
+				RETURN;
+			END_IF
+		UNTIL NOT Parameters[writeCounter].ReadOnly
+		END_REPEAT
+	END_IF
+
+	_writer(
+		NETID:= '',
+		PORT:= NcPort,
+		IDXGRP:= IndexGroup + NcAxisID,
+		IDXOFFS:= Parameters[writeCounter].IndexOffset,
+		LEN:= Parameters[writeCounter].Length,
+		SRCADDR:= ADR(Parameters[writeCounter].Value),
+		WRITE:= TRUE,
+		TMOUT:= Timeout,
+	);
+	
+	IF NOT _writer.BUSY THEN
+		_writer(WRITE:= FALSE);
+		IF _writer.ERR THEN
+			writing := FALSE;
+			ErrorHandling(ParameterName:= Parameters[writeCounter].Name, ErrorID:= _writer.ERRID);
+		ELSE
+			writeCounter := writeCounter + 1;
+		END_IF
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

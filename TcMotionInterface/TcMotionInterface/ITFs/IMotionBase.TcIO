@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <Itf Name="IMotionBase" Id="{68918ead-0123-0301-2d64-bb995298201e}">
+    <Declaration><![CDATA[INTERFACE IMotionBase
+]]></Declaration>
+    <Property Name="Error" Id="{f915e4ea-b458-07c3-1b94-39a4ea850221}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{1ce63ce8-e861-0c70-2f52-ed4962c3a765}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetAxisId" Id="{8423ba58-6ea3-06fe-1fc7-26ee67deaaec}">
+      <Declaration><![CDATA[PROPERTY GetAxisId : DWORD]]></Declaration>
+      <Get Name="Get" Id="{955a7ecf-3063-0db5-2349-aebd2fb09366}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetAxisState" Id="{e0f8fba2-6769-0421-3ce1-9cb03c401f64}">
+      <Declaration><![CDATA[PROPERTY GetAxisState : AxisState]]></Declaration>
+      <Get Name="Get" Id="{4c9f36c4-5ea5-0558-0830-e1d1b60b94a0}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetDriveAddress" Id="{0e34cca3-83e7-02e7-108b-a5b9a6ededdf}">
+      <Declaration><![CDATA[PROPERTY GetDriveAddress : STRING]]></Declaration>
+      <Get Name="Get" Id="{8981aecd-861e-0bb7-1a96-a93f005aa512}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetError" Id="{dfb93128-3264-06f0-13b9-e532cb2f1cb2}">
+      <Declaration><![CDATA[PROPERTY GetError : STRING]]></Declaration>
+      <Get Name="Get" Id="{f8b68ee0-231e-0d3f-340d-07d605d5efb1}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="Init" Id="{7c9ea52d-b3fb-0cec-0731-47018abfde2f}">
+      <Declaration><![CDATA[METHOD Init
+VAR_INPUT
+	Axis: REFERENCE TO AXIS_REF;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="ResetError" Id="{6d38c1cd-914c-091a-034d-ca0233062b4a}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+    </Method>
+    <Method Name="Run" Id="{c02b0554-d0ef-00fd-350f-874c242458a8}">
+      <Declaration><![CDATA[METHOD Run
+VAR_INPUT
+	EnableAxis: BOOL;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="StopMovement" Id="{09109740-849b-0e06-030d-29d4ea0dbb2c}">
+      <Declaration><![CDATA[METHOD StopMovement : BOOL;
+VAR_INPUT
+	Deceleration	: LREAL;
+	Jerk			: LREAL;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

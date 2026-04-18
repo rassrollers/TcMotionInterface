@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="NcParameterHandler_ViewModel" Id="{efa5179a-cc4d-093e-28b6-93a6735a2760}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK NcParameterHandler_ViewModel
+VAR
+	NcHandler: TcNcParameterHandler;
+	Parameter: NcParameter;
+	JsonH: TcJsonHandler;
+	State: NcViewModelState := NcViewModelState.Idle;
+	DoneTimer: TON;
+	
+	// Visu properties
+	FileName: STRING;
+	ParameterPath: STRING(255) := '/home/Administrator/';
+	AxisName: STRING;
+	AxisId: DWORD;
+	ReadButton: BOOL;
+	WriteButton: BOOL;
+	ResetButton: BOOL;
+	LoadButton: BOOL;
+	SaveButton: BOOL;
+	Status: STRING;
+	ParameterLoaded: BOOL;
+	Error: BOOL;
+	ErrorString: STRING(TcMotionInterface_Param.ErrorStringSize);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE State of
+	NcViewModelState.Idle:
+		IF ReadButton THEN
+			IF CheckAxisId() THEN
+				Status := 'Reading...';
+				State := NcViewModelState.Reading;
+			END_IF
+			ReadButton := FALSE;
+			
+		ELSIF WriteButton THEN
+			IF CheckAxisId() THEN
+				Status := 'Writing...';
+				State := NcViewModelState.Writing;
+			END_IF
+			WriteButton := FALSE;
+			
+		ELSIF LoadButton THEN
+			IF CheckFileName() AND CheckFilePath() THEN
+				Status := 'Loading...';
+				State := NcViewModelState.Loading;
+			END_IF
+			LoadButton := FALSE;
+			
+		ELSIF SaveButton THEN
+			IF CheckFileName() AND CheckAxisName() AND CheckFilePath() THEN
+				Status := 'Saving...';
+				Parameter.AxisName := AxisName;
+				State := NcViewModelState.Saving;
+			END_IF
+			SaveButton := FALSE;
+		END_IF
+		
+	NcViewModelState.Reading:
+		ParameterLoaded := FALSE;
+		IF NcHandler.ReadNcParameters(NcParameters:= Parameter, NcAxisID:= AxisId) THEN
+			ParameterLoaded := TRUE;
+			State := NcViewModelState.Done;
+		END_IF
+		
+	NcViewModelState.Writing:
+		IF NcHandler.WriteNcParameters(NcParameters:= Parameter, NcAxisID:= AxisId) THEN
+			State := NcViewModelState.Done;
+		END_IF
+		
+	NcViewModelState.Loading:
+		ParameterLoaded := FALSE;
+		IF JsonH.ReadJsonToStruct(FilePath:= ParameterPath, FileName:= CONCAT(FileName, '.json'), StructInstance:= Parameter) THEN
+			AxisName := Parameter.AxisName;
+			ParameterLoaded := TRUE;
+			State := NcViewModelState.Done;
+		END_IF
+		
+	NcViewModelState.Saving:
+		IF JsonH.WriteStructToJson(FilePath:= ParameterPath, FileName:= CONCAT(FileName, '.json'), StructInstance:= Parameter) THEN
+			State := NcViewModelState.Done;
+		END_IF
+	
+	NcViewModelState.Done:
+		Status := 'Done';
+		DoneTimer(IN:= TRUE, PT:= T#1S);
+		IF DoneTimer.Q THEN
+			State := NcViewModelState.Idle;
+		END_IF
+		
+	NcViewModelState.Error:
+		Status := 'Error raised';
+		Error := TRUE;
+		ResetError();
+		
+END_CASE
+
+CheckErrors();
+]]></ST>
+    </Implementation>
+    <Method Name="CheckAxisId" Id="{9ca35a37-01e5-0efc-279c-7a21fc15007b}">
+      <Declaration><![CDATA[METHOD PRIVATE CheckAxisId : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF AxisId = 0 THEN
+	ErrorString := 'AxisID can not be zero';
+	State := NcViewModelState.Error;
+ELSE
+	CheckAxisId := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckAxisName" Id="{1f8a6f49-904f-0488-2bd0-05c7fe5fe54c}">
+      <Declaration><![CDATA[METHOD PRIVATE CheckAxisName : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF AxisName = '' THEN
+	ErrorString := 'Axis name can not be empty';
+	State := NcViewModelState.Error;
+ELSE
+	CheckAxisName := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckErrors" Id="{70af15a4-868d-09c5-00bd-1d2f87c736d6}">
+      <Declaration><![CDATA[METHOD PRIVATE CheckErrors
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF JsonH.Error THEN
+	ErrorString := JsonH.GetError;
+	State := NcViewModelState.Error;
+ELSIF NcHandler.Error THEN
+	ErrorString := NcHandler.GetError;
+	State := NcViewModelState.Error;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckFileName" Id="{914cb72f-700b-0192-1462-e46fecdf3037}">
+      <Declaration><![CDATA[METHOD PRIVATE CheckFileName : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF FileName = '' THEN
+	ErrorString := 'File name can not be empty';
+	State := NcViewModelState.Error;
+ELSE
+	CheckFileName := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CheckFilePath" Id="{085b5baf-e317-0829-2101-61e8db7b89cf}">
+      <Declaration><![CDATA[METHOD PRIVATE CheckFilePath : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF ParameterPath = '' THEN
+	ErrorString := 'File path can not be empty';
+	State := NcViewModelState.Error;
+ELSE
+	CheckFilePath := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetError" Id="{e2ce1b9e-8a55-065b-219c-8dab4bbc153a}">
+      <Declaration><![CDATA[METHOD PRIVATE ResetError]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF ResetButton THEN
+	IF NcHandler.Error THEN
+		NcHandler.ResetError();
+	END_IF
+	IF JsonH.Error THEN
+		JsonH.ResetError();
+	END_IF
+	State := NcViewModelState.Idle;
+	Status := 'Error cleared';
+	Error := FALSE;
+	ErrorString := '';
+	ResetButton := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

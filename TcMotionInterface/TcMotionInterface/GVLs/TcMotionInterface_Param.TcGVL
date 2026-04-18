@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <GVL Name="TcMotionInterface_Param" Id="{4e9ccdb4-d436-0f2e-37ee-78c6726109d1}" ParameterList="True">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+	ErrorStringSize			: UINT := 150;		// Size of the error string messages (150).
+	ParameterSetNameSize	: UINT := 60;		// Size of the ParameterSet name (60)
+	JsonBufferSize			: UDINT := 50000;	// Max size of the JSON string that can be read from or written to (50000).
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

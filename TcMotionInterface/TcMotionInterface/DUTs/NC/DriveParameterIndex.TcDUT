@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="DriveParameterIndex" Id="{45038798-7aa8-0afa-35b8-b961378a4d9a}">
+    <Declaration><![CDATA[// Parameters for NC axis' controller.
+// IndexGroup + AxisID.
+// Remember to update array size accordingly.
+// https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_ads_intro/713120907.html&id=7012452035862457703
+TYPE DriveParameterIndex :
+STRUCT
+	IndexGroup: UDINT := 16#7000;
+	Parameters: ARRAY[0..24] OF ParameterSet := [
+		(Name:= 'NC Drive type',										IndexOffset:= 16#00000003, ReadOnly:= TRUE,		Length:= 4),  // 0
+		(Name:= 'Invert Motor Polarity',								IndexOffset:= 16#00000006, ReadOnly:= FALSE,	Length:= 2),
+		(Name:= 'Drive Mode',											IndexOffset:= 16#0000000A, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Minimum Drive Output Limitation [-1.0 ... 1.0]',		IndexOffset:= 16#0000000B, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Maximum Drive Output Limitation [-1.0 ... 1.0]',		IndexOffset:= 16#0000000C, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Following Error Calculation and Tolorance',			IndexOffset:= 16#00000010, ReadOnly:= FALSE,	Length:= 4),  // Combined value with Error Tolerance (NC error handling), 16#020x00 = Standard, 16#0A0x00 = Ignore, 16#0x0000 = Intern, 16#0x0100 = Extern
+		(Name:= 'Time Compensation Mode Drive (position mode only)',	IndexOffset:= 16#00000020, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Additional Drive Delay ',								IndexOffset:= 16#00000022, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Input Scaling Factor (Actual Torque)',					IndexOffset:= 16#00000031, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Input P-T1 Filter Time (Actual Torque)',				IndexOffset:= 16#00000032, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Input P-T1 Filter (Actual Torque Derivative)',			IndexOffset:= 16#00000033, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Reference Velocity',									IndexOffset:= 16#00000101, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'at Output Ratio [0.0 ... 1.0] ',						IndexOffset:= 16#00000102, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Drift Compensation (DAC-Offset)',						IndexOffset:= 16#00000104, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Scaling Factor (Velocity)',						IndexOffset:= 16#00000105, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Scaling Factor (Position)',						IndexOffset:= 16#00000109, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Scaling Factor (Acceleration)',					IndexOffset:= 16#0000010A, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Scaling Factor (Torque Offset)',				IndexOffset:= 16#0000010B, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Scaling Factor (Torque Setpoint)',				IndexOffset:= 16#0000010C, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Delay (Velocity)',								IndexOffset:= 16#0000010D, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Delay (Acceleration)',							IndexOffset:= 16#0000010E, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Output Delay (Torque Offset)',							IndexOffset:= 16#0000010F, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Smoothing Filter Type',								IndexOffset:= 16#00000110, ReadOnly:= FALSE,	Length:= 4),
+		(Name:= 'Smoothing Filter Time',								IndexOffset:= 16#00000111, ReadOnly:= FALSE,	Length:= 8),
+		(Name:= 'Smoothing Filter Order (P-Tn only)',					IndexOffset:= 16#00000112, ReadOnly:= FALSE,	Length:= 4)   // 24
+	];
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <Itf Name="IMotionCamming" Id="{8c1c3efe-f81d-03ac-2f6a-849191b401b5}">
+    <Declaration><![CDATA[INTERFACE IMotionCamming EXTENDS IMotionMovement
+]]></Declaration>
+    <Method Name="CamIn" Id="{758a36de-73b8-038a-3ef0-e2b73e3fe936}">
+      <Declaration><![CDATA[METHOD CamIn : BOOL;
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

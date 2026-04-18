@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <Itf Name="IDriveParameterHandler" Id="{7cfcf5ad-5dca-00a8-2d0b-2e60220013ce}">
+    <Declaration><![CDATA[INTERFACE IDriveParameterHandler
+]]></Declaration>
+    <Property Name="Error" Id="{e3a92360-bf23-07c1-0ed9-f4ddc7f07be8}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{5a58cb0c-491f-089e-3a21-15dffb576133}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetError" Id="{c9782da5-384d-045b-35f4-7a780a6d96c9}">
+      <Declaration><![CDATA[PROPERTY GetError : STRING[TcMotionInterface_Param.ErrorStringSize]]]></Declaration>
+      <Get Name="Get" Id="{e4e88690-e732-082f-2745-1aaf41492cd4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="ResetError" Id="{703d2a73-1dc8-011f-1e4b-e4744f12d9d1}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+    </Method>
+    <Method Name="WriteCanOpenParameters" Id="{ca0ad6fd-8a46-0434-14d7-2c24341bf4f9}">
+      <Declaration><![CDATA[// Write CAN Open parameters to a CAN device
+METHOD WriteCanOpenParameters : BOOL  // Return TRUE if successful
+VAR_INPUT
+	FilePath: STRING(255);  // Path to XML file, e.g. /home/Administrator/driveA.xml
+	NetId: STRING(23);  // NetID of device in IO list
+	CanId: UINT;  // CAN node ID
+END_VAR
+VAR_OUTPUT
+	NumberOfParameterWritten: UDINT;  // Return number of parameter written to device
+END_VAR]]></Declaration>
+    </Method>
+    <Method Name="WriteEtcDriveParameter" Id="{b1abb386-c756-0e45-20b9-7c328e964869}">
+      <Declaration><![CDATA[// Write COE parameters to a EtherCAT device
+METHOD WriteEtcDriveParameter : BOOL  // Return TRUE if successful
+VAR_INPUT
+	FilePath: STRING(255);  // Path to XML file, e.g. /home/Administrator/driveA.xml
+	NetId: STRING(23);  // NetID of device in IO list
+	EtcAddress: UINT;  // EtherCAT address / Ams port
+END_VAR
+VAR_OUTPUT
+	NumberOfParameterWritten: UDINT;  // Return number of parameter written to device
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

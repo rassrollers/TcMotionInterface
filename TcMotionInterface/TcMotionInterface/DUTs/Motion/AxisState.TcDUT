@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="AxisState" Id="{a28fb17c-4ac3-08ee-086c-9976c275e6ea}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE AxisState :
+(
+	Undefined,
+	ErrorStop,
+	Disabled,
+	Stopping,
+	Homing,
+	Standstill,
+	DiscreteMotion,
+	ContinuousMotion,
+	SynchronizedMotion
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

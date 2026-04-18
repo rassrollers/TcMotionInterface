@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <Itf Name="INcParameterHandler" Id="{273eadfd-2db2-0904-235d-610d003f474f}">
+    <Declaration><![CDATA[INTERFACE INcParameterHandler
+]]></Declaration>
+    <Property Name="Error" Id="{994feb59-d336-0dda-3c33-044bf3e15717}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{b25ead6f-b5b7-0711-2ab2-3e96c3472fbd}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="GetError" Id="{73c0d888-b994-0392-20dc-ef50c1409387}">
+      <Declaration><![CDATA[PROPERTY GetError : STRING[TcMotionInterface_Param.ErrorStringSize]]]></Declaration>
+      <Get Name="Get" Id="{45d35450-650a-05e0-3d88-d2af8739e871}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="ReadNcParameters" Id="{76ca652a-a53f-00ac-0aa6-6db292a5eee1}">
+      <Declaration><![CDATA[// Read the NC motion parameters from the Motion controller
+METHOD ReadNcParameters : BOOL  // Return TRUE if successful
+VAR_INPUT
+	NcParameters: REFERENCE TO NcParameter;  // REF to NC parameters
+	NcAxisID: DWORD;  // The NC axis ID
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="ResetError" Id="{8fc724a2-c787-0ad1-2258-80c5d08376c7}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+    </Method>
+    <Method Name="WriteNcParameters" Id="{2f8c702f-69e1-073a-0549-b055d2b4b74f}">
+      <Declaration><![CDATA[// Write the NC motion parameters to the Motion controller
+METHOD WriteNcParameters : BOOL  // Return TRUE if successful
+VAR_INPUT
+	NcParameters: REFERENCE TO NcParameter;  // REF to NC parameters
+	NcAxisID: DWORD;  // The NC axis ID
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

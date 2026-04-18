@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="MotionHandlingState" Id="{7b9148a1-9a8e-0e24-3f6f-5c5add83240f}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE MotionHandlingState :
+(
+	Idle,
+	Halt,
+	Stop,
+	MoveVelocity,
+	MoveAbsolute,
+	MoveRelative,
+	MoveCamIn,
+	Reset,
+	Error
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

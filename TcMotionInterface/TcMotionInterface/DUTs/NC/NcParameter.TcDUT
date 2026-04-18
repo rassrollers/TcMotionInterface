@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="NcParameter" Id="{76892414-bb04-08be-0aea-d7b96b8cb64b}">
+    <Declaration><![CDATA[TYPE NcParameter :
+STRUCT
+	AxisName			: STRING;
+	//GroupParameter		: GroupParameterIndex;  // Can't be used unless you have the GroupID
+	AxisParameter		: AxisParameterIndex;
+	EncoderParameter	: EncoderParameterIndex;
+	ControllerParameter	: ControllerParameterIndex;
+	DriveParameter		: DriveParameterIndex;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

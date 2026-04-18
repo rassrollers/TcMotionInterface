@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="TcMotionMovement" Id="{de8c2502-137f-00fb-2a69-1d9fd2db4d73}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TcMotionMovement IMPLEMENTS IMotionBase, IMotionMovement
+VAR
+	Axis			: REFERENCE TO AXIS_REF;
+	MasterAxis		: REFERENCE TO AXIS_REF;
+	
+	McPower			: MC_Power;
+	McStatus		: MC_ReadStatus;
+	McReset			: MC_Reset;
+	McHalt			: MC_Halt;
+	McStop			: MC_Stop;
+	
+	McMoveAbs		: MC_MoveAbsolute;
+	McMoveRel		: MC_MoveRelative;
+	McMoveVel		: MC_MoveVelocity;
+	McMoveMod		: MC_MoveModulo;
+	McMoveAdd		: MC_MoveAdditive;
+	McGearIn		: MC_GearIn;
+	McGearOut		: MC_GearOut;
+	McPhaseAbs		: MC_PhasingAbsolute;
+	McPhaseRel		: MC_PhasingRelative;
+	McMoveConAbs	: MC_MoveContinuousAbsolute;
+	McMoveConRel	: MC_MoveContinuousRelative;
+	
+	ModuloAxis		: BOOL;
+	CurrentState	: MotionHandlingState;
+	
+	_error			: BOOL;
+	_errorString	: STRING;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Error" Id="{98ab3e70-de38-0b63-3635-d1f891c08184}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{8c5c947c-a227-0922-11f7-8dced7b5b677}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := _error;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="ErrorHandling" Id="{5211fc6a-d817-0f92-3e70-92ecd5945cbe}">
+      <Declaration><![CDATA[METHOD PROTECTED ErrorHandling
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF Axis.Status.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('Axis error: ', DWORD_TO_HEXSTR(in:= Axis.Status.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McPower.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('Power error: ', DWORD_TO_HEXSTR(in:= McPower.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McStatus.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('Status error: ', DWORD_TO_HEXSTR(in:= McStatus.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McReset.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('Reset error: ', DWORD_TO_HEXSTR(in:= McReset.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McStop.Error THEN
+	_error := TRUE;
+	_errorString :=  CONCAT('Stop error: ', DWORD_TO_HEXSTR(in:= McStop.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McHalt.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('Halt error: ', DWORD_TO_HEXSTR(in:= McHalt.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McMoveVel.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('MoveVelocity error: ', DWORD_TO_HEXSTR(in:= McMoveVel.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McMoveAbs.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('MoveAbsolute error: ', DWORD_TO_HEXSTR(in:= McMoveAbs.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+ELSIF McMoveRel.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('MoveRelative error: ', DWORD_TO_HEXSTR(in:= McMoveRel.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="GetAxisDirection" Id="{6dad9cb6-0a09-073a-3690-034040cb8912}">
+      <Declaration><![CDATA[PROPERTY GetAxisDirection : AxisDirection
+]]></Declaration>
+      <Get Name="Get" Id="{9c2dfcc6-2b45-05a7-0a54-84db78f2d141}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF Axis.Status.PositiveDirection THEN
+	GetAxisDirection := AxisDirection.PositiveDirection;
+ELSIF Axis.Status.NegativeDirection THEN
+	GetAxisDirection := AxisDirection.NegativeDirection;
+END_IF
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetAxisId" Id="{940a3167-8f09-0325-0a9e-eeda9db34236}">
+      <Declaration><![CDATA[PROPERTY GetAxisId : DWORD
+]]></Declaration>
+      <Get Name="Get" Id="{f419fb1d-982e-07b1-218c-12b69e0f5b99}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetAxisId := Axis.ADS.Port;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetAxisState" Id="{e117d0dd-4126-00e0-30bc-72d875e4c513}">
+      <Declaration><![CDATA[PROPERTY GetAxisState : AxisState
+]]></Declaration>
+      <Get Name="Get" Id="{91217377-343f-0715-31b4-5cc8b2dd6cc8}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CASE Axis.Status.MotionState OF
+	MC_AxisStates.MC_AXISSTATE_DISABLED:
+		GetAxisState := AxisState.Disabled;
+	MC_AxisStates.MC_AXISSTATE_STANDSTILL:
+		GetAxisState := AxisState.Standstill;
+	MC_AxisStates.MC_AXISSTATE_STOPPING:
+		GetAxisState := AxisState.Stopping;
+	MC_AxisStates.MC_AXISSTATE_ERRORSTOP:
+		GetAxisState := AxisState.ErrorStop;
+	MC_AxisStates.MC_AXISSTATE_HOMING:
+		GetAxisState := AxisState.Homing;
+	MC_AxisStates.MC_AXISSTATE_CONTINOUSMOTION:
+		GetAxisState := AxisState.ContinuousMotion;
+	MC_AxisStates.MC_AXISSTATE_DISCRETEMOTION:
+		GetAxisState := AxisState.DiscreteMotion;
+	MC_AxisStates.MC_AXISSTATE_SYNCHRONIZEDMOTION:
+		GetAxisState := AxisState.SynchronizedMotion;
+	ELSE
+		GetAxisState := AxisState.Undefined;
+END_CASE
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetDriveAddress" Id="{5d8ddf00-db31-053c-0e6f-e71ea2994a60}">
+      <Declaration><![CDATA[PROPERTY GetDriveAddress : STRING
+]]></Declaration>
+      <Get Name="Get" Id="{8e036354-bd71-0f9d-3038-b98d74ae1cdc}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetDriveAddress := Axis.ADS.NetId;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetError" Id="{218cbd44-5828-067a-1e66-bd60f57dd93f}">
+      <Declaration><![CDATA[PROPERTY GetError : STRING
+]]></Declaration>
+      <Get Name="Get" Id="{b7f37b7b-8c05-05db-0766-c2a8a7e9f5d1}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetError := _errorString;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetMotionStatus" Id="{6c3e4467-7a46-01bb-18eb-436f818626b0}">
+      <Declaration><![CDATA[PROPERTY GetMotionStatus : MotionStatus
+]]></Declaration>
+      <Get Name="Get" Id="{838fe4d7-65b6-08e6-09ae-aa79164c7110}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF Axis.Status.ConstantVelocity THEN
+	GetMotionStatus := MotionStatus.ConstantVelocity;
+ELSIF Axis.Status.Accelerating THEN
+	GetMotionStatus := MotionStatus.Accelerating;
+ELSIF Axis.Status.Decelerating THEN
+	GetMotionStatus := MotionStatus.Decelerating;
+END_IF
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="HaltMovement" Id="{0c097070-69e4-02d5-3ee8-69d54308d760}">
+      <Declaration><![CDATA[METHOD HaltMovement : BOOL;
+VAR_INPUT
+	Deceleration	: LREAL;
+	Jerk	: LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[McHalt.Deceleration:= Deceleration;
+McHalt.Jerk:= Jerk;
+CurrentState := MotionHandlingState.Halt;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Init" Id="{bd50871e-fe66-0d6c-3577-a0d96e564f5d}">
+      <Declaration><![CDATA[METHOD Init
+VAR_INPUT
+	Axis	: REFERENCE TO AXIS_REF;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.Axis REF= Axis;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MotionCase" Id="{dda561ee-abdc-0b5a-1a4b-69077f4334bf}">
+      <Declaration><![CDATA[METHOD PROTECTED MotionCase
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[McReset(
+	Axis:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.Reset
+);
+IF McReset.Done THEN
+	_error := FALSE;
+	_errorString := '';
+	CurrentState := MotionHandlingState.Idle;
+END_IF
+
+McStop(
+	Axis:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.Stop
+);
+IF McStop.Done THEN
+	CurrentState := MotionHandlingState.Idle;
+END_IF
+
+McHalt(
+	Axis:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.Halt 
+);
+IF McHalt.Done THEN
+	CurrentState := MotionHandlingState.Idle;
+END_IF
+
+McMoveVel(
+	Axis:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.MoveVelocity 
+);
+
+McMoveRel(
+	Axis:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.MoveRelative
+);
+IF McMoveRel.Done THEN
+	CurrentState := MotionHandlingState.Idle;
+END_IF
+
+McMoveAbs(
+	Axis:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.MoveAbsolute
+);
+IF McMoveAbs.Done THEN
+	CurrentState := MotionHandlingState.Idle;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveAbsolute" Id="{13a018eb-58b6-061e-3393-db87d1d30c7a}">
+      <Declaration><![CDATA[METHOD MoveAbsolute : BOOL;
+VAR_INPUT
+	Position	: LREAL;
+	Velocity	: LREAL;
+	Acceleration	: LREAL;
+	Deceleration	: LREAL;
+	Jerk	: LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF CurrentState <> MotionHandlingState.Error AND CurrentState <> MotionHandlingState.Reset THEN
+	McMoveAbs.Position := Position;
+	McMoveAbs.Velocity := Velocity;
+	McMoveAbs.Acceleration:= Acceleration;
+	McMoveAbs.Deceleration:= Deceleration;
+	McMoveAbs.Jerk:= Jerk;
+	CurrentState := MotionHandlingState.MoveAbsolute;
+	MoveAbsolute := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveModulo" Id="{bb92e9ae-5d2d-0ae7-19de-46ca8d442f03}">
+      <Declaration><![CDATA[METHOD MoveModulo : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF CurrentState <> MotionHandlingState.Error AND CurrentState <> MotionHandlingState.Reset THEN
+	;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveRelative" Id="{0d9c8031-5b87-0f96-1996-a1a6529dde22}">
+      <Declaration><![CDATA[METHOD MoveRelative : BOOL;
+VAR_INPUT
+	Distance	: LREAL;
+	Velocity	: LREAL;
+	Acceleration	: LREAL;
+	Deceleration	: LREAL;
+	Jerk	: LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF CurrentState <> MotionHandlingState.Error AND CurrentState <> MotionHandlingState.Reset THEN
+	McMoveRel.Distance := Distance;
+	McMoveRel.Velocity := Velocity;
+	McMoveRel.Acceleration:= Acceleration;
+	McMoveRel.Deceleration:= Deceleration;
+	McMoveRel.Jerk:= Jerk;
+	CurrentState := MotionHandlingState.MoveRelative;
+	MoveRelative := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveVelocity" Id="{0e6af5d1-0716-0bc5-2e56-39dd6da00379}">
+      <Declaration><![CDATA[METHOD MoveVelocity : BOOL;
+VAR_INPUT
+	Velocity	: LREAL;
+	Acceleration	: LREAL;
+	Deceleration	: LREAL;
+	Jerk	: LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF CurrentState <> MotionHandlingState.Error AND CurrentState <> MotionHandlingState.Reset THEN
+	McMoveVel.Velocity:= Velocity;
+	McMoveVel.Acceleration:= Acceleration;
+	McMoveVel.Deceleration:= Deceleration;
+	McMoveVel.Jerk:= Jerk;
+	CurrentState := MotionHandlingState.MoveVelocity;
+	MoveVelocity := TRUE;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetError" Id="{ad13676b-517d-051f-31a1-529804bf4541}">
+      <Declaration><![CDATA[METHOD ResetError
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CurrentState := MotionHandlingState.Reset;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Run" Id="{8a1d159e-3327-0fbc-2eef-1493da8fc612}">
+      <Declaration><![CDATA[METHOD Run
+VAR_INPUT
+	EnableAxis: BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[McPower(
+	Axis:= Axis, 
+	Enable:= EnableAxis, 
+	Enable_Positive:= EnableAxis, 
+	Enable_Negative:= EnableAxis, 
+);
+
+McStatus(
+	Axis:= Axis, 
+	Enable:= TRUE
+);
+
+MotionCase();
+ErrorHandling();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StopMovement" Id="{f0a3036e-36af-00ad-3315-39b599db4e19}">
+      <Declaration><![CDATA[METHOD StopMovement : BOOL;
+VAR_INPUT
+	Deceleration	: LREAL;
+	Jerk	: LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[McStop.Deceleration:= Deceleration; 
+McStop.Jerk:= Jerk;
+CurrentState := MotionHandlingState.Stop;
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

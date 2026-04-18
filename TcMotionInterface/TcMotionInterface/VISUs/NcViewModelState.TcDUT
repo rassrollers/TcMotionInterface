@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="NcViewModelState" Id="{9caa98f6-b4bd-0304-0182-c2cc6da48f04}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE NcViewModelState :
+(
+	Idle,
+	Reading,
+	Writing,
+	Loading,
+	Saving,
+	Done,
+	Error
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

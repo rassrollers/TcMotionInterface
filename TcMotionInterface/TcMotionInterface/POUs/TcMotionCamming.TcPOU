@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="TcMotionCamming" Id="{75614e68-1124-096c-354f-f95fc88a345e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TcMotionCamming EXTENDS TcMotionMovement IMPLEMENTS IMotionCamming
+VAR
+	McCamIn	: MC_CamIn;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="CamIn" Id="{0a48b2aa-189e-0f1a-0aff-4c60651adfbc}">
+      <Declaration><![CDATA[METHOD CamIn : BOOL;
+VAR_INPUT
+	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CurrentState := MotionHandlingState.MoveCamIn;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ErrorHandling" Id="{0febcf3b-fe16-054e-210a-79f7ddc5c92b}">
+      <Declaration><![CDATA[METHOD PROTECTED ErrorHandling
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[SUPER^.ErrorHandling();
+IF McCamIn.Error THEN
+	_error := TRUE;
+	_errorString := CONCAT('CamIn error: ', DWORD_TO_HEXSTR(in:= McCamIn.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
+	CurrentState := MotionHandlingState.Error;	
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MotionCase" Id="{8ec8542e-649e-0ed6-141f-cda0f32605f6}">
+      <Declaration><![CDATA[METHOD PROTECTED MotionCase
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF CurrentState = MotionHandlingState.MoveCamIn THEN
+	ADSLOGSTR(msgCtrlMask:= ADSLOG_MSGTYPE_WARN, msgFmtStr:= 'Hello from Camming', strArg:='');
+	CurrentState := MotionHandlingState.Idle;
+END_IF
+
+SUPER^.MotionCase();
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>
