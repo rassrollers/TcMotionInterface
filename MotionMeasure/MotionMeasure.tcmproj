@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{cfb93c3c-1afc-407e-ae06-91000f4c212d}</ProjectGuid>
+    <AssemblyName>MotionMeasure</AssemblyName>
+    <Name>MotionMeasure</Name>
+    <RootNamespace>MotionMeasure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="YT Scope NC Project.tcscopex">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+</Project>

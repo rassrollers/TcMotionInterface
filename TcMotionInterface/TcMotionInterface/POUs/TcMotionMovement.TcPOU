@@ -26,6 +26,7 @@ VAR
 	ModuloAxis		: BOOL;
 	CurrentState	: MotionHandlingState;
 	
+	_gearRatio		: LREAL;
 	_error			: BOOL;
 	_errorString	: STRING;
 END_VAR
@@ -55,10 +56,6 @@ ELSIF McPower.Error THEN
 	_error := TRUE;
 	_errorString := CONCAT('Power error: ', DWORD_TO_HEXSTR(in:= McPower.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
 	CurrentState := MotionHandlingState.Error;
-ELSIF McStatus.Error THEN
-	_error := TRUE;
-	_errorString := CONCAT('Status error: ', DWORD_TO_HEXSTR(in:= McStatus.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
-	CurrentState := MotionHandlingState.Error;
 ELSIF McReset.Error THEN
 	_error := TRUE;
 	_errorString := CONCAT('Reset error: ', DWORD_TO_HEXSTR(in:= McReset.ErrorID, iPrecision:= 4, bLoCase:= FALSE));
@@ -87,6 +84,28 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="GearIn" Id="{3b0c16ca-6615-0db8-0bda-de2d1f43b7b1}">
+      <Declaration><![CDATA[METHOD GearIn : BOOL
+VAR_INPUT
+	MasterAxis: REFERENCE TO AXIS_REF;
+	GearRatio: LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.MasterAxis REF= MasterAxis;
+_gearRatio := GearRatio;
+CurrentState := MotionHandlingState.GearIn;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GearOut" Id="{26068db3-79c9-010f-26a6-4f1f48ee6ce8}">
+      <Declaration><![CDATA[METHOD GearOut : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CurrentState := MotionHandlingState.GearOut;
+]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="GetAxisDirection" Id="{6dad9cb6-0a09-073a-3690-034040cb8912}">
       <Declaration><![CDATA[PROPERTY GetAxisDirection : AxisDirection
 ]]></Declaration>
@@ -109,6 +128,17 @@ END_IF
         <Declaration><![CDATA[]]></Declaration>
         <Implementation>
           <ST><![CDATA[GetAxisId := Axis.ADS.Port;
+]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="GetAxisRef" Id="{bd6d4e05-a1e0-095c-1b9e-2d9c00e97d05}">
+      <Declaration><![CDATA[PROPERTY GetAxisRef : REFERENCE TO AXIS_REF
+]]></Declaration>
+      <Get Name="Get" Id="{a238755c-c280-0219-116d-21d20a7e18b0}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[GetAxisRef REF= Axis;
 ]]></ST>
         </Implementation>
       </Get>
@@ -257,6 +287,21 @@ McMoveAbs(
 IF McMoveAbs.Done THEN
 	CurrentState := MotionHandlingState.Idle;
 END_IF
+
+McGearIn(
+	Master:= MasterAxis, 
+	Slave:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.GearIn, 
+	RatioNumerator:= _gearRatio, 
+	RatioDenominator:= 1
+);
+McGearOut(
+	Slave:= Axis, 
+	Execute:= CurrentState = MotionHandlingState.GearOut
+);
+IF McGearOut.Done THEN
+	CurrentState := MotionHandlingState.Idle;
+END_IF
 ]]></ST>
       </Implementation>
     </Method>
@@ -365,7 +410,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[Axis.ReadStatus();
+        <ST><![CDATA[Axis();
 McPower(
 	Axis:= Axis, 
 	Enable:= EnableAxis, 

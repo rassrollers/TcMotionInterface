@@ -19,6 +19,8 @@ VAR
 	HaltMov: BOOL;
 	StopMov: BOOL;
 	CamInMov: BOOL;
+	GearInMove: BOOL;
+	GearOutMove: BOOL;
 	
 	Error: ARRAY[0..2] OF STRING;
 	iFor: UINT;
@@ -39,7 +41,7 @@ FOR iFor := 0 TO 2 DO
 		Error[iFor] := '';
 		Reset := FALSE;
 	ELSIF MoveVel THEN
-		MovementMotion1.MoveVelocity(Velocity:= 100, Acceleration:= 1000, Deceleration:= 1000, Jerk:= 10000);
+		MovementMotion1.MoveVelocity(Velocity:= 100, Acceleration:= 100, Deceleration:= 100, Jerk:= 1000);
 		MoveVel := FALSE;
 	ELSIF HaltMov THEN
 		MovementMotion1.HaltMovement(Deceleration:= 1000, Jerk:= 10000);
@@ -56,9 +58,15 @@ FOR iFor := 0 TO 2 DO
 	ELSIF CamInMov THEN
 		CammingMotion2.CamIn();
 		CamInMov := FALSE;
+	ELSIF GearInMove THEN
+		CammingMotion2.GearIn(MasterAxis:= BaseMotion[0].GetAxisRef, GearRatio:= 2.5);
+		GearInMove := FALSE;
+	ELSIF GearOutMove THEN
+		CammingMotion2.GearOut();
+		GearOutMove := FALSE;
 	END_IF
 	
-	BaseMotion[iFor].Run(EnableAxis:= Enable);
+	BaseMotion[iFor].UpdateAxis(EnableAxis:= Enable);
 
 	Error[iFor] := BaseMotion[iFor].GetError;
 END_FOR

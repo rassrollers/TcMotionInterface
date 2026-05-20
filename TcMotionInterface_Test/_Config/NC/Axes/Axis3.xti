@@ -1424,12 +1424,12 @@ External Setpoint Generation:
 			</Relations>
 		</DataType>
 	</DataTypes>
-	<Axis Id="3" CreateSymbols="true" AxisType="1">
+	<Axis Id="3" CreateSymbols="true" AxisType="1" SimulationMode="true">
 		<Name>__FILENAME__</Name>
 		<ProjectVariant PvUseLink="true" PvUseSimulation="true">
 			<Variant>
 				<Name>Machine</Name>
-				<Simulation Enable="false"/>
+				<Simulation Enable="true"/>
 				<IoMapping IoDivider="0" Type="12" EncoderType="16" DriveType="13" ControllerType="1">
 					<Links>
 						<OwnerA Name="__THIS__">

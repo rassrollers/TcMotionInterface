@@ -3,6 +3,18 @@
   <Itf Name="IMotionMovement" Id="{2859d61e-f05b-0a31-22f6-cc4d91d6084b}">
     <Declaration><![CDATA[INTERFACE IMotionMovement
 ]]></Declaration>
+    <Method Name="GearIn" Id="{de3c60c0-3449-0c59-0bfd-b00e280c173a}">
+      <Declaration><![CDATA[METHOD GearIn : BOOL
+VAR_INPUT
+	MasterAxis: REFERENCE TO AXIS_REF;
+	GearRatio: LREAL;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="GearOut" Id="{f0a36c45-0bf1-0956-105c-018e9c611023}">
+      <Declaration><![CDATA[METHOD GearOut : BOOL
+]]></Declaration>
+    </Method>
     <Property Name="GetAxisDirection" Id="{4e2dc283-9845-0ead-0fba-7e186cd161a0}">
       <Declaration><![CDATA[PROPERTY GetAxisDirection : AxisDirection]]></Declaration>
       <Get Name="Get" Id="{9a2eb42d-c778-078b-3b3c-1dbc3a1a512c}">

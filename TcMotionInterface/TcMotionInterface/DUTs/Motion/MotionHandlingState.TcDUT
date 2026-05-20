@@ -9,6 +9,8 @@ TYPE MotionHandlingState :
 	Idle,
 	Halt,
 	Stop,
+	GearIn,
+	GearOut,
 	MoveVelocity,
 	MoveAbsolute,
 	MoveRelative,

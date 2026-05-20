@@ -15,6 +15,12 @@
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
+    <Property Name="GetAxisRef" Id="{f011b821-290b-06f2-3f2c-8ff9a6bf4d25}">
+      <Declaration><![CDATA[PROPERTY GetAxisRef : REFERENCE TO AXIS_REF]]></Declaration>
+      <Get Name="Get" Id="{fd564aec-61c8-00e1-07bb-750f63f66cbb}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
     <Property Name="GetAxisState" Id="{e0f8fba2-6769-0421-3ce1-9cb03c401f64}">
       <Declaration><![CDATA[PROPERTY GetAxisState : AxisState]]></Declaration>
       <Get Name="Get" Id="{4c9f36c4-5ea5-0558-0830-e1d1b60b94a0}">
